@@ -20,6 +20,9 @@ namespace YC3_DAT_VE_CONCERT.Dto
 
         [StringLength(1000)]
         public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Total seat is required")]
+        public int TotalSeat { get; set; }
     }
 
     public class UpdateEventDto
@@ -46,6 +49,7 @@ namespace YC3_DAT_VE_CONCERT.Dto
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
+        public int TotalSeat { get; set; }
         public string VenueName { get; set; }
         public string VenueLocation { get; set; }
         public int VenueCapacity { get; set; }

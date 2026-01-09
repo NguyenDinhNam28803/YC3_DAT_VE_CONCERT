@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalDev", policy =>
@@ -56,6 +57,7 @@ app.UseRouting();
 
 app.MapGet("/swagger", () => Results.Redirect("/swagger"));
 
+// Đăng nhập người dùng
 app.MapPost("/login", async (IAuthService authService, LoginDto loginDto) =>
 {
     try
@@ -79,6 +81,7 @@ app.MapPost("/login", async (IAuthService authService, LoginDto loginDto) =>
     }
 });
 
+// Đăng ký người dùng mới
 app.MapPost("/register", async (IAuthService authService, RegisterDto registerDto) =>
 {
     try
@@ -96,6 +99,30 @@ app.MapPost("/register", async (IAuthService authService, RegisterDto registerDt
         { 
             success = false,
             message = "Registration failed",
+            detail = ex.Message 
+        });
+    }
+});
+
+// Thống kê dữ liệu
+app.MapGet("/statistical", async (IStatisticalService statisticalService) =>
+{
+    try
+    {
+        var data = await statisticalService.GetStatisticalData();
+        return Results.Ok(new 
+        { 
+            success = true,
+            message = "Statistical data retrieved successfully",
+            data = data 
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new 
+        { 
+            success = false,
+            message = "Failed to retrieve statistical data",
             detail = ex.Message 
         });
     }

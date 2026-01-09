@@ -5,6 +5,7 @@ namespace YC3_DAT_VE_CONCERT.Dto
     public class CustomerResponseDto
     {
         public int Id { get; set; }
+        public string Role { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string? Phone { get; set; }

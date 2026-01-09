@@ -44,6 +44,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                     .Select(user => new CustomerResponseDto
                     {
                         Id = user.Id,
+                        Role = user.Role.Name,
                         Name = user.Name,
                         Email = user.Email,
                         Phone = user.Phone,

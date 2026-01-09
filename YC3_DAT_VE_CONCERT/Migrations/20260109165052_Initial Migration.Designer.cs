@@ -12,8 +12,8 @@ using YC3_DAT_VE_CONCERT.Data;
 namespace YC3_DAT_VE_CONCERT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260109090914_AddSeedData")]
-    partial class AddSeedData
+    [Migration("20260109165052_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,14 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("name");
 
+                    b.Property<decimal>("TicketPrice")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("ticket_price");
+
+                    b.Property<int>("TotalSeat")
+                        .HasColumnType("int")
+                        .HasColumnName("total_seat");
+
                     b.Property<int>("VenueId")
                         .HasColumnType("int")
                         .HasColumnName("venue_id");
@@ -109,14 +117,18 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                             Date = new DateTime(2026, 5, 10, 19, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Chuỗi ban nhạc và DJ biểu diễn tại Sân vận động Mỹ Đình.",
                             Name = "Lễ hội Âm nhạc Xuân",
+                            TicketPrice = 500000.00m,
+                            TotalSeat = 35000,
                             VenueId = 2
                         },
                         new
                         {
                             Id = 2,
                             Date = new DateTime(2026, 6, 12, 19, 30, 0, 0, DateTimeKind.Utc),
-                            Description = "Buổi hòa nhạc cổ điển quy mô nhỏ tại Nhà Hát Lớn Hà Nội.",
+                            Description = "Buổi hòa nhạc cổ điển tại Nhà Hát Lớn Hà Nội.",
                             Name = "Đêm Nhạc Cổ Điển",
+                            TicketPrice = 350000.00m,
+                            TotalSeat = 1000,
                             VenueId = 1
                         },
                         new
@@ -125,14 +137,18 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                             Date = new DateTime(2026, 7, 5, 20, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Các ban nhạc indie và nghệ sĩ trẻ biểu diễn ở Nhà Văn Hóa Thanh Niên.",
                             Name = "Indie Showcase TP.HCM",
+                            TicketPrice = 200000.00m,
+                            TotalSeat = 800,
                             VenueId = 3
                         },
                         new
                         {
                             Id = 4,
                             Date = new DateTime(2026, 8, 20, 20, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Đêm nhạc jazz lãng mạn tại Nhà Hát Lớn Hà Nội.",
+                            Description = "Đêm nhạc jazz lãng mạn tại Hà Nội.",
                             Name = "Đêm Jazz Mùa Hè",
+                            TicketPrice = 300000.00m,
+                            TotalSeat = 900,
                             VenueId = 1
                         });
                 });
@@ -222,6 +238,10 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                         .HasColumnType("int")
                         .HasColumnName("order_id");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("price");
+
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("purchase_date");
@@ -231,6 +251,10 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("seat_number");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 

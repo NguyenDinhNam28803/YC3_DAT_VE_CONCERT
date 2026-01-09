@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using YC3_DAT_VE_CONCERT.Model;
 
 namespace YC3_DAT_VE_CONCERT.Data
@@ -50,7 +51,7 @@ namespace YC3_DAT_VE_CONCERT.Data
                 .HasForeignKey(t => t.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Ticket <-> Order : optional relation - when order removed, set OrderId on tickets to null.
+            // Ticket <-> Order : explicit behavior (Restrict)
             modelBuilder.Entity<Ticket>()
                 .HasOne(t => t.Order)
                 .WithMany(o => o.Tickets)
@@ -64,7 +65,7 @@ namespace YC3_DAT_VE_CONCERT.Data
                 .HasForeignKey(e => e.VenueId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Ensure consistent table/column mapping is respected by attributes on the model classes.
+            // Seed roles
             modelBuilder.Entity<Role>()
                 .HasData(
                     new Role { Id = 1, Name = "Admin" },
@@ -96,7 +97,7 @@ namespace YC3_DAT_VE_CONCERT.Data
                     }
                 );
 
-            // Seed events (VenueId must reference seeded venue ids above)
+            // --- Updated: seed events include new columns TicketPrice and TotalSeat ---
             modelBuilder.Entity<Event>()
                 .HasData(
                     new Event
@@ -105,7 +106,9 @@ namespace YC3_DAT_VE_CONCERT.Data
                         Name = "Lễ hội Âm nhạc Xuân",
                         Date = new DateTime(2026, 05, 10, 19, 0, 0, DateTimeKind.Utc),
                         VenueId = 2,
-                        Description = "Chuỗi ban nhạc và DJ biểu diễn tại Sân vận động Mỹ Đình."
+                        Description = "Chuỗi ban nhạc và DJ biểu diễn tại Sân vận động Mỹ Đình.",
+                        TicketPrice = 500000.00m,
+                        TotalSeat = 35000
                     },
                     new Event
                     {
@@ -113,7 +116,9 @@ namespace YC3_DAT_VE_CONCERT.Data
                         Name = "Đêm Nhạc Cổ Điển",
                         Date = new DateTime(2026, 06, 12, 19, 30, 0, DateTimeKind.Utc),
                         VenueId = 1,
-                        Description = "Buổi hòa nhạc cổ điển quy mô nhỏ tại Nhà Hát Lớn Hà Nội."
+                        Description = "Buổi hòa nhạc cổ điển tại Nhà Hát Lớn Hà Nội.",
+                        TicketPrice = 350000.00m,
+                        TotalSeat = 1000
                     },
                     new Event
                     {
@@ -121,7 +126,9 @@ namespace YC3_DAT_VE_CONCERT.Data
                         Name = "Indie Showcase TP.HCM",
                         Date = new DateTime(2026, 07, 05, 20, 0, 0, DateTimeKind.Utc),
                         VenueId = 3,
-                        Description = "Các ban nhạc indie và nghệ sĩ trẻ biểu diễn ở Nhà Văn Hóa Thanh Niên."
+                        Description = "Các ban nhạc indie và nghệ sĩ trẻ biểu diễn ở Nhà Văn Hóa Thanh Niên.",
+                        TicketPrice = 200000.00m,
+                        TotalSeat = 800
                     },
                     new Event
                     {
@@ -129,9 +136,13 @@ namespace YC3_DAT_VE_CONCERT.Data
                         Name = "Đêm Jazz Mùa Hè",
                         Date = new DateTime(2026, 08, 20, 20, 0, 0, DateTimeKind.Utc),
                         VenueId = 1,
-                        Description = "Đêm nhạc jazz lãng mạn tại Nhà Hát Lớn Hà Nội."
+                        Description = "Đêm nhạc jazz lãng mạn tại Hà Nội.",
+                        TicketPrice = 300000.00m,
+                        TotalSeat = 900
                     }
                 );
+
+            // (other seeds for Customer/Order/Ticket remain unchanged)
         }
     }
 }

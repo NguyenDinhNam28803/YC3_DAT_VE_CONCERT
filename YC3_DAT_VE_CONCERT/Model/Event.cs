@@ -31,6 +31,16 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Column("description")]
         public string? Description { get; set; }
 
+        [Required(ErrorMessage = "Event ticket price is required")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Event ticket price must be greater than 0")]
+        [Column("ticket_price")]
+        public decimal TicketPrice { get; set; }
+
+        [Required(ErrorMessage = "Total seat is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Total seat must be greater than 0")]
+        [Column("total_seat")]
+        public int TotalSeat { get; set; }
+
         // Navigation Properties
         [ForeignKey("VenueId")]
         public virtual Venue Venue { get; set; }

@@ -3,6 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YC3_DAT_VE_CONCERT.Model
 {
+    public enum TicketStatus
+    {
+        Available, // Có sẵn
+        Sold, // Đã bán
+        Cancelled // Đã hủy
+    }
+       
     [Table("tickets")]
     public class Ticket
     {
@@ -17,6 +24,11 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Required(ErrorMessage = "Customer is required")]
         [Column("customer_id")]
         public int CustomerId { get; set; }
+
+        [Required(ErrorMessage = "Price is required")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Column("price")]
+        public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Purchase date is required")]
         [DataType(DataType.DateTime)]
@@ -33,6 +45,10 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Column("order_id")]
         [Required(ErrorMessage = "Order is required")]
         public int OrderId { get; set; }
+
+        [Required(ErrorMessage = "Status is required")]
+        [Column("status")]
+        public TicketStatus Status { get; set; } = TicketStatus.Available;
 
         // Navigation Properties
         [ForeignKey("EventId")]

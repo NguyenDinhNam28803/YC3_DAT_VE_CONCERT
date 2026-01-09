@@ -73,7 +73,9 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                     name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     venue_id = table.Column<int>(type: "int", nullable: false),
-                    description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                    description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ticket_price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    total_seat = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -116,9 +118,11 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     event_id = table.Column<int>(type: "int", nullable: false),
                     customer_id = table.Column<int>(type: "int", nullable: false),
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     purchase_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     seat_number = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    order_id = table.Column<int>(type: "int", nullable: false)
+                    order_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -150,6 +154,27 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                 {
                     { 1, "Admin" },
                     { 2, "User" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "venues",
+                columns: new[] { "id", "capacity", "location", "name" },
+                values: new object[,]
+                {
+                    { 1, 1200, "1 Tràng Tiền, Hoàn Kiếm, Hà Nội", "Nhà Hát Lớn Hà Nội" },
+                    { 2, 40000, "Mỹ Đình, Nam Từ Liêm, Hà Nội", "Sân vận động Mỹ Đình" },
+                    { 3, 2000, "4 Phạm Ngọc Thạch, Quận 1, TP. Hồ Chí Minh", "Nhà Văn Hóa Thanh Niên" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "events",
+                columns: new[] { "id", "date", "description", "name", "ticket_price", "total_seat", "venue_id" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 5, 10, 19, 0, 0, 0, DateTimeKind.Utc), "Chuỗi ban nhạc và DJ biểu diễn tại Sân vận động Mỹ Đình.", "Lễ hội Âm nhạc Xuân", 500000.00m, 35000, 2 },
+                    { 2, new DateTime(2026, 6, 12, 19, 30, 0, 0, DateTimeKind.Utc), "Buổi hòa nhạc cổ điển tại Nhà Hát Lớn Hà Nội.", "Đêm Nhạc Cổ Điển", 350000.00m, 1000, 1 },
+                    { 3, new DateTime(2026, 7, 5, 20, 0, 0, 0, DateTimeKind.Utc), "Các ban nhạc indie và nghệ sĩ trẻ biểu diễn ở Nhà Văn Hóa Thanh Niên.", "Indie Showcase TP.HCM", 200000.00m, 800, 3 },
+                    { 4, new DateTime(2026, 8, 20, 20, 0, 0, 0, DateTimeKind.Utc), "Đêm nhạc jazz lãng mạn tại Hà Nội.", "Đêm Jazz Mùa Hè", 300000.00m, 900, 1 }
                 });
 
             migrationBuilder.CreateIndex(
