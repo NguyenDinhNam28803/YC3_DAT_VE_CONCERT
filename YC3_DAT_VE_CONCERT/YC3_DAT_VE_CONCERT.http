@@ -1,0 +1,6 @@
+@YC3_DAT_VE_CONCERT_HostAddress = http://localhost:5015
+
+GET {{YC3_DAT_VE_CONCERT_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
