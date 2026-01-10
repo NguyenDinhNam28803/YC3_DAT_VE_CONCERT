@@ -2,7 +2,7 @@
 
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)
 ![C#](https://img.shields.io/badge/C%23-13.0-239120?style=for-the-badge&logo=csharp)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL_Server-2022-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 > 🎫 Hệ thống API RESTful cho đặt vé concert được xây dựng với .NET 9 và MySQL, hỗ trợ đầy đủ chức năng quản lý sự kiện, đặt vé và thống kê.
@@ -45,10 +45,10 @@
 ### **Backend Framework**
 - ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet) **.NET 9** với **C# 13**
 - ![ASP.NET](https://img.shields.io/badge/ASP.NET-Core-512BD4?logo=dotnet) **ASP.NET Core Web API**
-- ![EF Core](https://img.shields.io/badge/EF_Core-8.0-512BD4?logo=dotnet) **Entity Framework Core**
+- ![EF Core](https://img.shields.io/badge/EF_Core-9.0-512BD4?logo=dotnet) **Entity Framework Core**
 
 ### **Database**
-- ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white) **MySQL 8.0+**
+- ![SQL Server](https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver&logoColor=white) **Microsoft SQL Server 2022** (hoặc 2019/2017)
 
 ### **Tools & Libraries**
 - 📝 **Swagger/OpenAPI** - API Documentation
@@ -151,7 +151,10 @@ YC3_DAT_VE_CONCERT/
 ### **Yêu cầu hệ thống**
 
 - ✅ [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- ✅ [MySQL Server 8.0+](https://dev.mysql.com/downloads/mysql/)
+- ✅ [SQL Server 2022](https://www.microsoft.com/sql-server/sql-server-downloads) (Express/Developer/Standard/Enterprise)
+  - Hoặc SQL Server 2019/2017
+  - Hoặc [LocalDB](https://learn.microsoft.com/sql/database-engine/configure-windows/sql-server-express-localdb) (cho development)
+- ✅ [SQL Server Management Studio (SSMS)](https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms) - Optional
 - ✅ [Visual Studio 2022](https://visualstudio.microsoft.com/) hoặc [VS Code](https://code.visualstudio.com/)
 - ✅ [Git](https://git-scm.com/)
 
