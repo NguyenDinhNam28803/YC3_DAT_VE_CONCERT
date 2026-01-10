@@ -119,11 +119,23 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
+                var eventexist = await _context.Events.FindAsync(ticket.EventId);
+                if (eventexist == null)
+                {
+                    throw new Exception("Event not found.");
+                }
+
+                var seatExists = await _context.Tickets
+                    .AnyAsync(t => t.EventId == ticket.EventId && t.SeatNumber == ticket.SeatNumber);
+                if (seatExists)
+                {
+                    throw new Exception("Seat number already exists for this event.");
+                }
                 var newTicket = new Ticket
                 {
-                    EventId = ticket.EventId,
+                    EventId = eventexist.Id,
                     SeatNumber = ticket.SeatNumber,
-                    Price = ticket.Price,
+                    Price = eventexist.TicketPrice,
                     Status = TicketStatus.Available
                    
                 };

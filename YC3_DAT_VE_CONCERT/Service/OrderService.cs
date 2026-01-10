@@ -55,7 +55,9 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
+                var listTicket = await _ticketService.GetTicketsByUserId(userId);
                 var listOrders = await _context.Orders
+                    .Include(o => o.Tickets)
                     .Where(o => o.CustomerId == userId)
                     .Select(o => new OrderResponseDto
                     {
@@ -64,16 +66,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                         CustomerName = o.Customer.Name,
                         OrderDate = o.OrderDate,
                         Status = o.Status.ToString(),
-                        Tickets = o.Tickets.Select(t => new TicketUserDtoResponse
-                        {
-                            Id = t.Id,
-                            EventName = t.Event.Name,
-                            UserName = t.Customer.Name,
-                            EventDate = t.Event.Date,
-                            SeatNumber = t.SeatNumber,
-                            Price = t.Price,
-                            PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
-                        }).ToList()
+                        Tickets = listTicket
                     }).ToListAsync();
 
                 return listOrders;
