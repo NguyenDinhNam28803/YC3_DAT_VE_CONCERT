@@ -1,7 +1,8 @@
 ﻿using System;
 using YC3_DAT_VE_CONCERT.Data;
-using YC3_DAT_VE_CONCERT.Model;
+using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
+using YC3_DAT_VE_CONCERT.Model;
 
 namespace YC3_DAT_VE_CONCERT.Service
 {
@@ -14,31 +15,31 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // Lấy danh sách tất cả vé
-        public List<Ticket> GetAllTicket()
+        public List<TicketDtoResponse> GetAllTicket()
         {
             throw new NotImplementedException();
         }
 
         // Lấy vé theo ID người dùng
-        public List<Ticket> GetTicketsByUserId(int userId)
+        public List<TicketDtoResponse> GetTicketsByUserId(int userId)
         {
             throw new NotImplementedException();
         }
 
         // Lấy vé theo ID vé
-        public Ticket GetTicketById(int id)
+        public TicketDtoResponse GetTicketById(int id)
         {
             throw new NotImplementedException();
         }
 
         // Tạo vé mới
-        public void CreateTicket(Ticket ticket)
+        public TicketDtoRequest CreateTicket(Ticket ticket)
         {
             throw new NotImplementedException();
         }
 
         // Cập nhật vé
-        public void UpdateTicket(int id, Ticket ticket)
+        public UpdateTicketDto UpdateTicket(int id, Ticket ticket)
         {
             throw new NotImplementedException();
         }

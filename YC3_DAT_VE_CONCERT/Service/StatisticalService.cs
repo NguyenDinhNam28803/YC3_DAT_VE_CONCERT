@@ -19,13 +19,13 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
-                var ticketSold = await _context.Tickets.Where(t => t.Status == Model.TicketStatus.Sold).SumAsync(t => t.Price);
-                var totalTicketsSold = await _context.Tickets.CountAsync(t => t.Status == Model.TicketStatus.Sold);
+                var ticketSold = await _context.Tickets.CountAsync(t => t.Status == Model.TicketStatus.Sold);
+                var totalRevenue = await _context.Tickets.Where(t => t.Status == Model.TicketStatus.Sold).SumAsync(t => t.Price);
                 var totalCustomers = await _context.Customers.CountAsync();
                 var statisticalData = new StatisticalDto
                 {
-                    TotalTicketsSold = totalTicketsSold,
-                    TotalRevenue = ticketSold,
+                    TotalTicketsSold = ticketSold,
+                    TotalRevenue = totalRevenue,
                     TotalCustomers = totalCustomers
                 };
                 return statisticalData;

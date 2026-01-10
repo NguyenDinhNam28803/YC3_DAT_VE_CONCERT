@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Tài liệu về Swagger dự án : https://localhost:7153/swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -21,13 +22,20 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1"
     });
 });
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStatisticalService, StatisticalService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IStatisticalService, StatisticalService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalDev", policy =>
     {
-        policy.AllowAnyOrigin() // <-- origin front-end
+        policy.AllowAnyOrigin() // <-- Allow requests from any origin
               .AllowAnyHeader()
               .AllowAnyMethod();
         // .AllowCredentials(); // Bật nếu bạn gửi cookies/credentials. Nếu bật, không dùng AllowAnyOrigin.
@@ -57,79 +65,9 @@ app.UseRouting();
 
 app.MapGet("/swagger", () => Results.Redirect("/swagger"));
 
-// Đăng nhập người dùng
-app.MapPost("/login", async (IAuthService authService, LoginDto loginDto) =>
-{
-    try
-    {
-        var userInfo = await authService.Login(loginDto);
-        return Results.Ok(new 
-        { 
-            success = true,
-            message = "Login successful",
-            data = userInfo 
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new 
-        { 
-            success = false,
-            message = "Login failed",
-            details = ex.Message 
-        });
-    }
-});
-
-// Đăng ký người dùng mới
-app.MapPost("/register", async (IAuthService authService, RegisterDto registerDto) =>
-{
-    try
-    {
-        await authService.Register(registerDto);
-        return Results.Ok(new 
-        { 
-            success = true,
-            message = "Registration successful" 
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new 
-        { 
-            success = false,
-            message = "Registration failed",
-            detail = ex.Message 
-        });
-    }
-});
-
-// Thống kê dữ liệu
-app.MapGet("/statistical", async (IStatisticalService statisticalService) =>
-{
-    try
-    {
-        var data = await statisticalService.GetStatisticalData();
-        return Results.Ok(new 
-        { 
-            success = true,
-            message = "Statistical data retrieved successfully",
-            data = data 
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new 
-        { 
-            success = false,
-            message = "Failed to retrieve statistical data",
-            detail = ex.Message 
-        });
-    }
-});
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
