@@ -6,13 +6,13 @@ namespace YC3_DAT_VE_CONCERT.Interface
     {
 
         // Lấy danh sách tất cả địa điểm tổ chức
-        List<string> GetAllVenues();
+        List<VenueResponseDto> GetAllVenues();
 
         // Lấy địa điểm tổ chức theo ID
-        string GetVenueById(int venueId);
+        VenueResponseDto GetVenueById(int venueId);
 
         // Lấy địa điểm tổ chức theo tên
-        string GetVenueByName(string name);
+        VenueResponseDto GetVenueByName(string name);
 
         // Tạo địa điểm tổ chức mới
         void CreateVenue(CreateVenueDto createVenueDto);

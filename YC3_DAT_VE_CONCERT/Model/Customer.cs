@@ -35,7 +35,7 @@ namespace YC3_DAT_VE_CONCERT.Model
 
         [Column("role_id")]
         [Required(ErrorMessage = "Role ID is required")]
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
 
         // Navigation Properties
         [ForeignKey("RoleId")]

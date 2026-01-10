@@ -20,20 +20,17 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Required(ErrorMessage = "Event is required")]
         [Column("event_id")]
         public int EventId { get; set; }
-
-        [Required(ErrorMessage = "Customer is required")]
         [Column("customer_id")]
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         [Column("price")]
         public decimal Price { get; set; }
 
-        [Required(ErrorMessage = "Purchase date is required")]
         [DataType(DataType.DateTime)]
         [Column("purchase_date")]
-        public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
+        public DateTime? PurchaseDate { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "Seat number is required")]
         [StringLength(10)]
@@ -43,8 +40,7 @@ namespace YC3_DAT_VE_CONCERT.Model
         public string SeatNumber { get; set; }
 
         [Column("order_id")]
-        [Required(ErrorMessage = "Order is required")]
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
 
         [Required(ErrorMessage = "Status is required")]
         [Column("status")]

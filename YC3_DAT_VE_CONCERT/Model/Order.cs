@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YC3_DAT_VE_CONCERT.Model
 {
+    public enum OrderStatus
+    {
+        Pending,
+        Completed,
+        Cancelled
+    }
     [Table("orders")]
     public class Order
     {
@@ -24,12 +30,7 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Column("status")]
         [RegularExpression("^(pending|completed|cancelled)$",
             ErrorMessage = "Status must be pending, completed, or cancelled")]
-        public string Status { get; set; } = "pending";
-
-        [Required(ErrorMessage = "Amount is required")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0")]
-        [Column("amount", TypeName = "decimal(18,2)")]
-        public decimal Amount { get; set; }
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         // Navigation Properties
         [ForeignKey("CustomerId")]

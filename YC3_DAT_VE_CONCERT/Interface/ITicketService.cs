@@ -6,19 +6,22 @@ namespace YC3_DAT_VE_CONCERT.Interface
     public interface ITicketService
     {
         // Lấy danh sách tất cả vé
-        List<TicketDtoResponse> GetAllTicket();
+        Task<List<TicketDtoResponse>> GetAllTicket();
 
         // Lấy vé theo userId
-        List<TicketDtoResponse> GetTicketsByUserId(int userId);
+        Task<List<TicketUserDtoResponse>> GetTicketsByUserId(int userId);
 
         // Lấy vé theo id
-        TicketDtoResponse GetTicketById(int id);
+        Task<TicketDtoResponse> GetTicketById(int id);
+
+        // Đặt vé 
+        Task<TicketUserDtoResponse> BookTicket(int userId, int orderId, TicketUserDtoRequest ticketRequest);
 
         // Tạo vé mới
-        TicketDtoRequest CreateTicket(Ticket ticket);
+        Task<TicketDtoRequest> CreateTicket(TicketDtoRequest ticket);
 
         // Cập nhật vé
-        UpdateTicketDto UpdateTicket(int id, Ticket ticket);
+        UpdateTicketDto UpdateTicket(int id, UpdateTicketDto ticket);
 
         // Xóa vé
         bool DeleteTicket(int id);

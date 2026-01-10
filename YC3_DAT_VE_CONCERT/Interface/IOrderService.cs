@@ -1,9 +1,14 @@
-﻿namespace YC3_DAT_VE_CONCERT.Interface
+﻿using YC3_DAT_VE_CONCERT.Dto;
+
+namespace YC3_DAT_VE_CONCERT.Interface
 {
     public interface IOrderService
     {
+        Task<List<OrderResponseDto>> GetAllOrders();
+
+        Task<List<OrderResponseDto>> GetOrdersByUserId(int userId);
         // Tạo đơn đặt vé mới
-        void CreateOrder(int customerId, int ticketId);
+        Task<OrderResponseDto> CreateOrder(CreateOrderDto orderDto);
 
         // Cập nhật đơn đặt vé
         void UpdateOrder(int orderId, int ticketId);
