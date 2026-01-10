@@ -173,24 +173,82 @@ cd YC3_DAT_VE_CONCERT
 dotnet restore
 ```
 
+**Packages cần thiết:**
+```bash
+# Entity Framework Core cho SQL Server
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+
+# EF Core Tools cho migrations
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+
+# Design package cho migrations
+dotnet add package Microsoft.EntityFrameworkCore.Design
+```
+
 ---
 
-### **Bước 3: Tạo Database MySQL**
+### **Bước 3: Cấu hình SQL Server**
+
+#### **Option 1: Sử dụng SQL Server LocalDB (Khuyên dùng cho Development)**
+
+LocalDB đã được cài sẵn với Visual Studio, không cần cài đặt thêm.
+
+**Connection String:**
+```json
+"Server=(localdb)\\mssqllocaldb;Database=ConcertDB;Trusted_Connection=true;MultipleActiveResultSets=true"
+```
+
+#### **Option 2: Sử dụng SQL Server Express/Developer**
+
+**Cài đặt SQL Server:**
+1. Tải [SQL Server 2022 Express](https://www.microsoft.com/sql-server/sql-server-downloads)
+2. Chọn "Basic" installation
+3. Lưu lại tên instance (thường là `SQLEXPRESS`)
+
+**Tạo Database:**
 ```sql
--- Kết nối MySQL
-mysql -u root -p
+-- Mở SQL Server Management Studio (SSMS)
+-- Hoặc dùng sqlcmd
 
 -- Tạo database
-CREATE DATABASE concert_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE ConcertDB;
+GO
 
--- Tạo user (optional)
-CREATE USER 'concert_user'@'localhost' IDENTIFIED BY 'your_password';
-GRANT ALL PRIVILEGES ON concert_db.* TO 'concert_user'@'localhost';
-FLUSH PRIVILEGES;
+-- Sử dụng database
+USE ConcertDB;
+GO
 
 -- Kiểm tra
-USE concert_db;
-SHOW TABLES;
+SELECT DB_NAME();
+```
+
+**Connection String:**
+```json
+"Server=localhost\\SQLEXPRESS;Database=ConcertDB;Trusted_Connection=true;TrustServerCertificate=true"
+```
+
+#### **Option 3: SQL Server với SQL Authentication**
+```sql
+-- Tạo login
+CREATE LOGIN concert_user WITH PASSWORD = 'YourStrongPassword123!';
+GO
+
+-- Tạo database
+CREATE DATABASE ConcertDB;
+GO
+
+-- Gán quyền
+USE ConcertDB;
+GO
+CREATE USER concert_user FOR LOGIN concert_user;
+GO
+ALTER ROLE db_owner ADD MEMBER concert_user;
+GO
+```
+
+**Connection String:**
+```json
+"Server=localhost\\SQLEXPRESS;Database=ConcertDB;User Id=concert_user;Password=YourStrongPassword123!;TrustServerCertificate=true"
 ```
 
 ---
@@ -201,26 +259,80 @@ Mở file `appsettings.json` và cập nhật:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "server=localhost;database=concert_db;user=root;password=your_password"
+    // Option 1: LocalDB (Development)
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ConcertDB;Trusted_Connection=true;MultipleActiveResultSets=true",
+    
+    // Option 2: SQL Server Express với Windows Authentication
+    // "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=ConcertDB;Trusted_Connection=true;TrustServerCertificate=true",
+    
+    // Option 3: SQL Server với SQL Authentication
+    // "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=ConcertDB;User Id=concert_user;Password=YourStrongPassword123!;TrustServerCertificate=true",
+    
+    // Option 4: Remote SQL Server
+    // "DefaultConnection": "Server=your-server.database.windows.net;Database=ConcertDB;User Id=your-username;Password=your-password;Encrypt=true"
   },
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Information"
     }
   },
   "AllowedHosts": "*"
 }
 ```
 
+**Giải thích các tham số:**
+- `Server`: Tên server hoặc địa chỉ IP
+- `Database`: Tên database
+- `Trusted_Connection=true`: Dùng Windows Authentication
+- `User Id` & `Password`: Dùng SQL Authentication
+- `TrustServerCertificate=true`: Bỏ qua SSL certificate validation (development)
+- `MultipleActiveResultSets=true`: Cho phép nhiều query đồng thời
+
 ---
 
-### **Bước 5: Chạy Migrations**
+### **Bước 5: Cấu hình DbContext trong Program.cs**
+```csharp
+using Microsoft.EntityFrameworkCore;
+using YourProject.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add DbContext với SQL Server
+builder.Services.AddDbContext(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptions => sqlServerOptions
+            .EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null)
+    ));
+
+// ... rest of configuration
+```
+
+---
+
+### **Bước 6: Chạy Migrations**
 
 **Visual Studio:**
 ```powershell
+# Mở Package Manager Console
 Tools > NuGet Package Manager > Package Manager Console
+
+# Tạo migration đầu tiên (nếu chưa có)
+Add-Migration InitialCreate
+
+# Apply migration lên database
 Update-Database
+
+# Xem các migrations
+Get-Migration
+
+# Rollback migration (nếu cần)
+Update-Database -Migration PreviousMigrationName
 ```
 
 **Command Line:**
@@ -228,17 +340,46 @@ Update-Database
 # Cài đặt EF Core tools (nếu chưa có)
 dotnet tool install --global dotnet-ef
 
-# Chạy migration
+# Kiểm tra version
+dotnet ef --version
+
+# Tạo migration
+dotnet ef migrations add InitialCreate
+
+# Xem script SQL sẽ được chạy
+dotnet ef migrations script
+
+# Apply migration
 dotnet ef database update
 
-# Hoặc tạo migration mới nếu cần
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+# Xem danh sách migrations
+dotnet ef migrations list
+
+# Remove migration cuối cùng (chưa apply)
+dotnet ef migrations remove
+
+# Drop database (cẩn thận!)
+dotnet ef database drop
+```
+
+**Kiểm tra trong SSMS:**
+```sql
+USE ConcertDB;
+GO
+
+-- Xem các bảng
+SELECT * FROM INFORMATION_SCHEMA.TABLES;
+
+-- Xem migration history
+SELECT * FROM __EFMigrationsHistory;
+
+-- Xem cấu trúc bảng
+sp_help 'customers';
 ```
 
 ---
 
-### **Bước 6: Chạy ứng dụng**
+### **Bước 7: Chạy ứng dụng**
 
 **Visual Studio:**
 - Nhấn `F5` (Debug) hoặc `Ctrl+F5` (Run without debugging)
@@ -253,7 +394,7 @@ dotnet run
 ```
 https://localhost:7153/
 hoặc
-https://localhost:5015/
+http://localhost:5015/
 ```
 
 ---
