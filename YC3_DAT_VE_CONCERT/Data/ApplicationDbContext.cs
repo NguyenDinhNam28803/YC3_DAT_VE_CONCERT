@@ -23,6 +23,15 @@ namespace YC3_DAT_VE_CONCERT.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure decimal precision/scale to avoid silent truncation warnings
+            modelBuilder.Entity<Event>()
+                .Property(e => e.TicketPrice)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Ticket>()
+                .Property(t => t.Price)
+                .HasColumnType("decimal(18,2)");
+
             // Role <-> Customer : one Role has many Customers, delete restricted.
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.Role)

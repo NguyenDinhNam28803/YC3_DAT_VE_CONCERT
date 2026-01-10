@@ -79,7 +79,10 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
-                var ticket = await _context.Tickets.FindAsync(ticketRequest.TicketId);
+                var ticket = await _context.Tickets
+                    .Include(t => t.Event)
+                    .FirstOrDefaultAsync(t => t.Id == ticketRequest.TicketId);
+
                 if (ticket == null)
                 {
                     throw new Exception("Ticket not found.");
@@ -90,22 +93,28 @@ namespace YC3_DAT_VE_CONCERT.Service
                     throw new Exception("Ticket is already sold.");
                 }
 
+                var customer = await _context.Customers.FindAsync(userId);
+                if (customer == null)
+                {
+                    throw new Exception("Customer not found.");
+                }
+
                 ticket.CustomerId = userId;
                 ticket.OrderId = orderId;
                 ticket.Status = TicketStatus.Sold;
                 ticket.PurchaseDate = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-                
+
                 var ticketResponse = new TicketUserDtoResponse
                 {
                     Id = ticket.Id,
-                    EventName = (await _context.Events.FindAsync(ticket.EventId))?.Name ?? "Unknown Event",
-                    UserName = (await _context.Customers.FindAsync(userId))?.Name ?? "Unknown User",
-                    EventDate = (await _context.Events.FindAsync(ticket.EventId))?.Date ?? DateTime.MinValue,
+                    EventName = ticket.Event?.Name ?? "Unknown Event",
+                    UserName = customer.Name ?? "Unknown User",
+                    EventDate = ticket.Event?.Date ?? DateTime.MinValue,
                     SeatNumber = ticket.SeatNumber,
                     Price = ticket.Price,
                     PurchaseDate = ticket.PurchaseDate ?? DateTime.MinValue
                 };
+
                 return ticketResponse;
             }
             catch (Exception ex)

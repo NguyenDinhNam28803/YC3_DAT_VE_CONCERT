@@ -12,7 +12,7 @@ using YC3_DAT_VE_CONCERT.Data;
 namespace YC3_DAT_VE_CONCERT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260110095837_Initial Migration")]
+    [Migration("20260110160933_Initial Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
