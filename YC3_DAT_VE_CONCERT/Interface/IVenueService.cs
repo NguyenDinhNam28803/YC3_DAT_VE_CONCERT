@@ -12,7 +12,7 @@ namespace YC3_DAT_VE_CONCERT.Interface
         Task<VenueResponseDto> GetVenueById(int venueId);
 
         // Lấy địa điểm tổ chức theo tên
-        Task<VenueResponseDto> GetVenueByName(string name);
+        Task<List<VenueResponseDto>> GetVenueByName(string name);
 
         // Tạo địa điểm tổ chức mới
         Task<VenueResponseDto> CreateVenue(CreateVenueDto createVenueDto);
@@ -21,6 +21,6 @@ namespace YC3_DAT_VE_CONCERT.Interface
         Task<VenueResponseDto> UpdateVenue(int venueId, UpdateVenueDto updateVenueDto);
 
         // Xóa địa điểm tổ chức
-        bool DeleteVenue(int venueId);
+        Task<bool> DeleteVenue(int venueId);
     }
 }

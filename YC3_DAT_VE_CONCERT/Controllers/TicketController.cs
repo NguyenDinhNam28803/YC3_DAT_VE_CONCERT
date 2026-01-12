@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Model;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace YC3_DAT_VE_CONCERT.Controllers
 {
@@ -17,6 +18,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
         // Các action method sẽ được định nghĩa ở đây, ví dụ:
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all tickets")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> GetAllTickets()
         {
             try
@@ -40,6 +44,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
 
         [HttpGet]
         [Route("user/{userId}")]
+        [SwaggerOperation(Summary = "Get tickets by user ID")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> GetTicketsByUserId(int userId)
         {
             try
@@ -63,6 +70,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create a new ticket")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public IActionResult CreateTicket([FromBody] TicketDtoRequest ticket)
         {
             try

@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PayOS;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Reflection;
 using YC3_DAT_VE_CONCERT.Data;
 using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Service;
-using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,17 @@ builder.Services.AddSwaggerGen(options =>
     options.EnableAnnotations();
 });
 
+// register PayOs options and http client
+//builder.Services.Configure<PayOsOptions>(builder.Configuration.GetSection("PayOs"));
+builder.Services.AddHttpClient<PayOsService>((sp, client) =>
+{
+    var cfg = builder.Configuration.GetSection("PayOs");
+    client.BaseAddress = new Uri(cfg["BaseUrl"] ?? "https://api.payos.example");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// register service
+builder.Services.AddScoped<PayOsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();

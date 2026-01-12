@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using YC3_DAT_VE_CONCERT.Service;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Dto;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace YC3_DAT_VE_CONCERT.Controllers
 {
@@ -17,6 +18,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all events")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> GetAllEvents()
         {
             try

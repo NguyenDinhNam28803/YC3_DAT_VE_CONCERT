@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace YC3_DAT_VE_CONCERT.Controllers
 {
@@ -17,6 +18,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all orders")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> GetAllOrders()
         {
             try
@@ -41,6 +45,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
 
         [HttpGet]
         [Route("user/{userId}")]
+        [SwaggerOperation(Summary = "Get orders by user ID")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             try
@@ -64,6 +71,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create a new order")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto orderDto)
         {
             try
