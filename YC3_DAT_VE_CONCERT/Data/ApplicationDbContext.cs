@@ -28,6 +28,10 @@ namespace YC3_DAT_VE_CONCERT.Data
                 .Property(e => e.TicketPrice)
                 .HasColumnType("decimal(18,2)");
 
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<Ticket>()
                 .Property(t => t.Price)
                 .HasColumnType("decimal(18,2)");
@@ -152,6 +156,50 @@ namespace YC3_DAT_VE_CONCERT.Data
                 );
 
             // (other seeds for Customer/Order/Ticket remain unchanged)
+            // --- New: seed 100 tickets per event (events 1..4) ---
+            // Ticket.Id values start at 1 and increment; adjust if you already have ticket seeds to avoid id conflicts.
+            var tickets = new List<Ticket>();
+            int nextTicketId = 1;
+
+            // Prices for existing seeded events (must match above seeds)
+            var eventPrices = new Dictionary<int, decimal>
+            {
+                { 1, 500000.00m },
+                { 2, 350000.00m },
+                { 3, 200000.00m },
+                { 4, 300000.00m }
+            };
+
+            // Seat letter per event to produce distinct seat numbers per event
+            var seatPrefix = new Dictionary<int, char>
+            {
+                { 1, 'A' },
+                { 2, 'B' },
+                { 3, 'C' },
+                { 4, 'D' }
+            };
+
+            for (int evtId = 1; evtId <= 4; evtId++)
+            {
+                for (int i = 1; i <= 100; i++)
+                {
+                    // Seat number format: Letter + number (fits your regex ^[A-Z][0-9]{1,3}$)
+                    var seatNumber = $"{seatPrefix[evtId]}{i}";
+                    tickets.Add(new Ticket
+                    {
+                        Id = nextTicketId++,
+                        EventId = evtId,
+                        CustomerId = null,
+                        Price = eventPrices[evtId],
+                        PurchaseDate = null,
+                        SeatNumber = seatNumber,
+                        OrderId = null,
+                        Status = TicketStatus.Available
+                    });
+                }
+            }
+
+            modelBuilder.Entity<Ticket>().HasData(tickets.ToArray());
         }
     }
 }

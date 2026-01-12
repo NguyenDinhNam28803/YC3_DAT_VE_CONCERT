@@ -2,7 +2,7 @@
 
 namespace YC3_DAT_VE_CONCERT.Dto
 {
-    // tạo đơn hàng
+    // tạo đơn hàng mới bao gồm customerId và danh sách vé
     public class CreateOrderDto
     {
         [Required]
@@ -30,6 +30,9 @@ namespace YC3_DAT_VE_CONCERT.Dto
         public string CustomerName { get; set; }
         public DateTime OrderDate { get; set; }
         public string Status { get; set; }
+        public int TotalTickets { get; set; }
+        public string TotalAmount { get; set; }
+        public string? PaymentLink { get; set; }
         public List<TicketUserDtoResponse> Tickets { get; set; }
     }
 }

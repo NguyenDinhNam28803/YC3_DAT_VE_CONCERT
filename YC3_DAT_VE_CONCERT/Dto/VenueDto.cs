@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YC3_DAT_VE_CONCERT.Model;
 
 namespace YC3_DAT_VE_CONCERT.Dto
 {
@@ -39,6 +40,16 @@ namespace YC3_DAT_VE_CONCERT.Dto
         public string Location { get; set; }
         public int Capacity { get; set; }
         public int TotalEvents { get; set; }
-        public int UpcomingEvents { get; set; }
+        public List<EventResponseStatistical>? UpcomingEvents { get; set; }
+    }
+
+    public class EventResponseStatistical
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+        public int TotalTicket { get; set; }
+        public int TotalSoldTicket { get; set; }
+        public int VenueId { get; set; }
     }
 }

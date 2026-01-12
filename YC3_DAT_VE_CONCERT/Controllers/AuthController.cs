@@ -4,6 +4,7 @@ using YC3_DAT_VE_CONCERT.Service;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Data;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace YC3_DAT_VE_CONCERT.Controllers
 {
@@ -17,6 +18,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             _authService = authService;
         }
         [HttpPost("register")]
+        [SwaggerOperation(Summary = "Đăng ký", Description = "Đăng ký tài khoản cho user")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             try
@@ -40,6 +44,9 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpPost("login")]
+        [SwaggerOperation(Summary = "Đăng nhập", Description = "Đăng nhập và trả về thông tin người dùng")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerResponseDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             try

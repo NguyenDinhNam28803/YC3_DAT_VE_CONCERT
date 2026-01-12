@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YC3_DAT_VE_CONCERT.Data;
 
@@ -11,9 +12,11 @@ using YC3_DAT_VE_CONCERT.Data;
 namespace YC3_DAT_VE_CONCERT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260112094938_Initial Migration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,24 +170,10 @@ namespace YC3_DAT_VE_CONCERT.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
-                    b.Property<string>("PaymentLink")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("payment_link");
-
                     b.Property<int>("Status")
                         .HasMaxLength(50)
                         .HasColumnType("int")
                         .HasColumnName("status");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("total_amount");
-
-                    b.Property<int>("TotalTickets")
-                        .HasColumnType("int")
-                        .HasColumnName("total_tickets");
 
                     b.HasKey("Id");
 

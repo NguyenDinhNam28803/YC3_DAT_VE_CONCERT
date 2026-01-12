@@ -21,6 +21,7 @@ namespace YC3_DAT_VE_CONCERT.Service
             try
             {
                 var orders = await _context.Orders
+                    .Include(o => o.Tickets)
                     .Select(o => new OrderResponseDto
                     {
                         Id = o.Id,
@@ -28,11 +29,12 @@ namespace YC3_DAT_VE_CONCERT.Service
                         CustomerName = o.Customer.Name,
                         OrderDate = o.OrderDate,
                         Status = o.Status.ToString(),
+                        TotalAmount = o.Tickets.Where(t => t.OrderId == o.Id).Sum(t => t.Price).ToString("C"),
+                        TotalTickets = o.Tickets.Count(),
                         Tickets = o.Tickets.Select(t => new TicketUserDtoResponse
                         {
                             Id = t.Id,
                             EventName = t.Event.Name,
-                            UserName = t.Customer.Name,
                             EventDate = t.Event.Date,
                             SeatNumber = t.SeatNumber,
                             Price = t.Price,
@@ -55,7 +57,6 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
-                var listTicket = await _ticketService.GetTicketsByUserId(userId);
                 var listOrders = await _context.Orders
                     .Include(o => o.Tickets)
                     .Where(o => o.CustomerId == userId)
@@ -66,7 +67,21 @@ namespace YC3_DAT_VE_CONCERT.Service
                         CustomerName = o.Customer.Name,
                         OrderDate = o.OrderDate,
                         Status = o.Status.ToString(),
-                        Tickets = listTicket
+                        TotalAmount = o.Tickets.Where(t => t.OrderId == o.Id).Sum(t => t.Price).ToString("C"),
+                        TotalTickets = o.Tickets.Count(),
+                        Tickets = _context.Tickets
+                            .Include(t => t.Customer)
+                            .Where(t => t.OrderId == o.Id)
+                            .Select(t => new TicketUserDtoResponse
+                            {
+                                Id = t.Id,
+                                EventName = t.Event.Name,
+                                UserName = t.Customer.Name,
+                                EventDate = t.Event.Date,
+                                SeatNumber = t.SeatNumber,
+                                Price = t.Price,
+                                PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
+                            }).ToList()
                     }).ToListAsync();
 
                 return listOrders;
@@ -103,7 +118,17 @@ namespace YC3_DAT_VE_CONCERT.Service
                     throw new Exception("Some tickets not found.");
                 }
 
-                foreach (var ticket in tickets)
+                // Validate tickets nếu 1 người đặt 1 vé nhiều lần
+                var checkDuplicateTicketIds = ticketIds.GroupBy(id => id)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+                if (checkDuplicateTicketIds.Count > 0)
+                {
+                    throw new Exception($"Duplicate ticket IDs in the order: {string.Join(", ", checkDuplicateTicketIds)}");
+                }
+
+                    foreach (var ticket in tickets)
                 {
                     if (ticket.Status == TicketStatus.Sold)
                     {
@@ -135,6 +160,8 @@ namespace YC3_DAT_VE_CONCERT.Service
 
                 // 5. Update order status
                 order.Status = OrderStatus.Completed;
+                order.TotalTickets = tickets.Count;
+                order.TotalAmount = tickets.Sum(t => t.Price);
                 await _context.SaveChangesAsync();
 
                 // 6. Prepare response
@@ -142,7 +169,6 @@ namespace YC3_DAT_VE_CONCERT.Service
                 {
                     Id = t.Id,
                     EventName = t.Event.Name,
-                    UserName = customer.Name,
                     EventDate = t.Event.Date,
                     SeatNumber = t.SeatNumber,
                     Price = t.Price,
@@ -156,11 +182,21 @@ namespace YC3_DAT_VE_CONCERT.Service
                     CustomerName = customer.Name,
                     OrderDate = order.OrderDate,
                     Status = order.Status.ToString(),
+                    TotalAmount = order.Tickets.Where(t => t.OrderId == order.Id).Sum(t => t.Price).ToString("C"),
+                    TotalTickets = order.Tickets.Count(),
                     Tickets = bookedTickets
                 };
             }
             catch (Exception ex)
             {
+                var fullError = ex.ToString(); // Lấy full error
+                Console.WriteLine(fullError);
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + ex.InnerException.ToString());
+                }
+
                 throw new Exception($"Error creating order: {ex.Message}", ex);
             }
         }

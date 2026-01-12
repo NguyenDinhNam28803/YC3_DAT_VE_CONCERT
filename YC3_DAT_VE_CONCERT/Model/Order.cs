@@ -32,6 +32,19 @@ namespace YC3_DAT_VE_CONCERT.Model
             ErrorMessage = "Status must be pending, completed, or cancelled")]
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
+        [Required(ErrorMessage = "Total amount is required")]
+        [Column("total_amount")]
+        public decimal TotalAmount { get; set; }
+
+        [Required(ErrorMessage = "Total tickets is required")]
+        [Column("total_tickets")]
+        public int TotalTickets { get; set; }
+
+        [Required(ErrorMessage = "Payment link is required")]
+        [StringLength(500)]
+        [Column("payment_link")]
+        public string? PaymentLink { get; set; }
+
         // Navigation Properties
         [ForeignKey("CustomerId")]
         public virtual Customer Customer { get; set; }

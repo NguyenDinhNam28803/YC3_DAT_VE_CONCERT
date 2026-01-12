@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
 
@@ -63,11 +64,11 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOrder([FromBody] CreateOrderDto orderDto)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto orderDto)
         {
             try
             {
-                _orderService.CreateOrder(orderDto);
+                await _orderService.CreateOrder(orderDto);
                 return Ok(new
                 {
                     success = true,
@@ -76,6 +77,14 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             }
             catch (Exception ex)
             {
+                var fullError = ex.ToString(); // Lấy full error
+                Console.WriteLine(fullError);
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + ex.InnerException.ToString());
+                }
+
                 return BadRequest(new
                 {
                     success = false,

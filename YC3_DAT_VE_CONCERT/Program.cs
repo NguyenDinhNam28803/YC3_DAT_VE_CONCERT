@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using YC3_DAT_VE_CONCERT.Data;
-using YC3_DAT_VE_CONCERT.Service;
-using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Dto;
+using YC3_DAT_VE_CONCERT.Interface;
+using YC3_DAT_VE_CONCERT.Service;
+using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -21,6 +21,13 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Book Consert ticket API",
         Version = "v1"
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
+    // enable [SwaggerOperation], [SwaggerResponse]
+    options.EnableAnnotations();
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -30,6 +37,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
 
 builder.Services.AddCors(options =>
 {
