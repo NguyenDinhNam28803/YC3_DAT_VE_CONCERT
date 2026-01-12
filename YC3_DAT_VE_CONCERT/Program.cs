@@ -59,11 +59,7 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseCors("AllowLocalDev");
-
-app.MapGet("/", () => "Welcome to the Book Concert Ticket API!");
 app.UseRouting();
-
-app.MapGet("/swagger", () => Results.Redirect("/swagger"));
 
 app.UseHttpsRedirection();
 
