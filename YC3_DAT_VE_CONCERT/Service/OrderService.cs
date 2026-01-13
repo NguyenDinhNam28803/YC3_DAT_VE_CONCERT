@@ -162,6 +162,14 @@ namespace YC3_DAT_VE_CONCERT.Service
                 order.Status = OrderStatus.Completed;
                 order.TotalTickets = tickets.Count;
                 order.TotalAmount = tickets.Sum(t => t.Price);
+                var paymentLink = await _payOSService.CreatePaymentLink(
+                    orderCode: order.Id,
+                    amount: order.Tickets.Where(t => t.OrderId == order.Id).Sum(t => t.Price),
+                    description: $"Payment for Order ID {order.Id}",
+                    buyerName: customer.Name,
+                    buyerEmail: customer.Email
+                );
+                order.PaymentLink = paymentLink;
                 await _context.SaveChangesAsync();
 
                 // 6. Prepare response
@@ -174,14 +182,6 @@ namespace YC3_DAT_VE_CONCERT.Service
                     Price = t.Price,
                     PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
                 }).ToList();
-
-                var paymentLink = await _payOSService.CreatePaymentLink(
-                    orderCode: order.Id,
-                    amount: order.Tickets.Where(t => t.OrderId == order.Id).Sum(t => t.Price),
-                    description: $"Payment for Order ID {order.Id}",
-                    buyerName: customer.Name,
-                    buyerEmail: customer.Email
-                );
 
                 return new OrderResponseDto
                 {

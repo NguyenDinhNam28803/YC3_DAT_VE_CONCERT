@@ -36,21 +36,28 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // IMPORTANT: method name must match the interface IPayOSService.CreatePaymentLink
-        public async Task<object> CreatePaymentLink(long orderCode, decimal amount, string description, string buyerName, string buyerEmail)
+        public async Task<string> CreatePaymentLink(long orderCode, decimal amount, string description, string buyerName, string buyerEmail)
         {
-            var amount_int = Convert.ToInt32(amount * 100); // Convert to smallest currency unit
-            // Use SDK request type explicitly to avoid ambiguous reference with your local model
-            var sdkRequest = new CreatePaymentLinkRequest
+            try
             {
-                OrderCode = orderCode,
-                Description = description,
-                Amount = amount_int,
-                ReturnUrl = "https://your-return-url.com",
-                CancelUrl = "https://your-cancel-url.com"
-            };
+                var amount_int = Convert.ToInt32(amount * 100); // Convert to smallest currency unit
+                                                                // Use SDK request type explicitly to avoid ambiguous reference with your local model
+                var sdkRequest = new CreatePaymentLinkRequest
+                {
+                    OrderCode = orderCode,
+                    Description = description,
+                    Amount = amount_int,
+                    ReturnUrl = "https://your-return-url.com",
+                    CancelUrl = "https://your-cancel-url.com"
+                };
 
-            var response = await _payOSClient.PaymentRequests.CreateAsync(sdkRequest);
-            return response!;
+                var response = await _payOSClient.PaymentRequests.CreateAsync(sdkRequest);
+                return response.CheckoutUrl;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error creating payment link: " + ex.Message);
+            }
         }
 
         // Placeholder - implement according to SDK methods
