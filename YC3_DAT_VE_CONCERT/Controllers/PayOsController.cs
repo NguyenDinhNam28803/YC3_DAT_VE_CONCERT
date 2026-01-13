@@ -24,7 +24,8 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
-                var result = await _payOSService.CreatePaymentLink(request.OrderCode, request.Amount, request.Description, request.BuyerName, request.BuyerEmail);
+                var amount_int = Convert.ToInt32(request.Amount * 100); // Convert to smallest currency unit
+                var result = await _payOSService.CreatePaymentLink(request.OrderCode, amount_int, request.Description, request.BuyerName, request.BuyerEmail);
                 return Ok(new
                 {
                     success = true,

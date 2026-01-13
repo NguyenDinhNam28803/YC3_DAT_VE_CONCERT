@@ -9,11 +9,11 @@ namespace YC3_DAT_VE_CONCERT.Service
     public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ITicketService _ticketService;
-        public OrderService(ApplicationDbContext context, ITicketService ticketService)
+        private readonly IPayOSService _payOSService;
+        public OrderService(ApplicationDbContext context, IPayOSService payOSService)
         {
             _context = context;
-            _ticketService = ticketService;
+            _payOSService = payOSService;
         }
         
         public async Task<List<OrderResponseDto>> GetAllOrders()
@@ -128,7 +128,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                     throw new Exception($"Duplicate ticket IDs in the order: {string.Join(", ", checkDuplicateTicketIds)}");
                 }
 
-                    foreach (var ticket in tickets)
+                foreach (var ticket in tickets)
                 {
                     if (ticket.Status == TicketStatus.Sold)
                     {
@@ -175,6 +175,14 @@ namespace YC3_DAT_VE_CONCERT.Service
                     PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
                 }).ToList();
 
+                var paymentLink = await _payOSService.CreatePaymentLink(
+                    orderCode: order.Id,
+                    amount: order.Tickets.Where(t => t.OrderId == order.Id).Sum(t => t.Price),
+                    description: $"Payment for Order ID {order.Id}",
+                    buyerName: customer.Name,
+                    buyerEmail: customer.Email
+                );
+
                 return new OrderResponseDto
                 {
                     Id = order.Id,
@@ -184,6 +192,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                     Status = order.Status.ToString(),
                     TotalAmount = order.Tickets.Where(t => t.OrderId == order.Id).Sum(t => t.Price).ToString("C"),
                     TotalTickets = order.Tickets.Count(),
+                    PaymentLink = paymentLink,
                     Tickets = bookedTickets
                 };
             }

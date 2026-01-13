@@ -1,4 +1,6 @@
-﻿namespace YC3_DAT_VE_CONCERT.Model
+﻿using System.Text.Json.Serialization;
+
+namespace YC3_DAT_VE_CONCERT.Model
 {
     public class CreatePaymentRequest
     {
@@ -12,10 +14,51 @@
     public class PaymentLinkRequestModel
     {
         public long OrderCode { get; set; }
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Description { get; set; }
         public string BuyerName { get; set; }
         public string BuyerEmail { get; set; }
+    }
+
+    public class PaymentLinkResponseModel
+    {
+        [JsonPropertyName("bin")]
+        public string? Bin { get; set; }
+
+        [JsonPropertyName("accountNumber")]
+        public string? AccountNumber { get; set; }
+
+        [JsonPropertyName("accountName")]
+        public string? AccountName { get; set; }
+
+        // amount in sample is an integer (smallest unit or VND units) - use long to be safe
+        [JsonPropertyName("amount")]
+        public long Amount { get; set; }
+
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+
+        [JsonPropertyName("orderCode")]
+        public long OrderCode { get; set; }
+
+        [JsonPropertyName("currency")]
+        public string? Currency { get; set; }
+
+        [JsonPropertyName("paymentLinkId")]
+        public string? PaymentLinkId { get; set; }
+
+        // expiredAt can be null or a timestamp string -> DateTime? with custom parsing if needed
+        [JsonPropertyName("expiredAt")]
+        public DateTime? ExpiredAt { get; set; }
+
+        [JsonPropertyName("status")]
+        public string? Status { get; set; }
+
+        [JsonPropertyName("checkoutUrl")]
+        public string? CheckoutUrl { get; set; }
+
+        [JsonPropertyName("qrCode")]
+        public string? QrCode { get; set; }
     }
 
     // Response model trả về cho client

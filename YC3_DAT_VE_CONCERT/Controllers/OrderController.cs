@@ -12,9 +12,11 @@ namespace YC3_DAT_VE_CONCERT.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        private readonly IPayOSService _payOSService;
+        public OrderController(IOrderService orderService, IPayOSService payOSService)
         {
             _orderService = orderService;
+            _payOSService = payOSService;
         }
 
         [HttpGet]
@@ -78,11 +80,12 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
-                await _orderService.CreateOrder(orderDto);
+                var order =  await _orderService.CreateOrder(orderDto);
                 return Ok(new
                 {
                     success = true,
-                    message = "Order created successfully"
+                    message = "Order created successfully",
+                    order = order
                 });
             }
             catch (Exception ex)

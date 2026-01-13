@@ -32,7 +32,7 @@ namespace YC3_DAT_VE_CONCERT.Dto
         public string Status { get; set; }
         public int TotalTickets { get; set; }
         public string TotalAmount { get; set; }
-        public string? PaymentLink { get; set; }
+        public object PaymentLink { get; set; }
         public List<TicketUserDtoResponse> Tickets { get; set; }
     }
 }
