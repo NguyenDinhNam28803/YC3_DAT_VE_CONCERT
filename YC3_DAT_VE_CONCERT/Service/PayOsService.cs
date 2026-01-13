@@ -60,33 +60,35 @@ namespace YC3_DAT_VE_CONCERT.Service
             }
         }
 
-        // Placeholder - implement according to SDK methods
-        //public async Task<object> GetPaymentInfo(long orderCode)
-        //{
-        //    try
-        //    {
-        //        var response = await Task.Run(() => _payOSClient.PaymentRequests.(orderCode));
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error retrieving payment info: " + ex.Message);
-        //    }
-        //}
+        //Placeholder - implement according to SDK methods
+        public async Task<object> GetPaymentInfo(long orderCode)
+        {
+            //try
+            //{
+            //    var response = await Task.Run(() => _payOSClient.PaymentRequests.(orderCode));
+            //    return response;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception("Error retrieving payment info: " + ex.Message);
+            //}
+            throw new NotImplementedException();
+        }
 
-        //// Placeholder - implement according to SDK methods
-        //public async Task<object> CancelPayment(long orderCode, string? reason = null)
-        //{
-        //    try
-        //    {
-        //        var response = await Task.Run(() => _payOSClient.CancelPaymentLink(orderCode, reason));
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error cancelling payment: " + ex.Message);
-        //    }
-        //}
+        // Placeholder - implement according to SDK methods
+        public async Task<object> CancelPayment(long orderCode, string? reason = null)
+        {
+            //try
+            //{
+            //    var response = await Task.Run(() => _payOSClient.CancelPaymentLink(orderCode, reason));
+            //    return response;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception("Error cancelling payment: " + ex.Message);
+            //}
+            throw new NotImplementedException();
+        }
 
         // Verify webhook signature using stored checksum key (HMAC-SHA256 -> Base64)
         public bool VerifyWebhookSignature(string webhookUrl, string signature)

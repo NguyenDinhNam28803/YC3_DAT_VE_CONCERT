@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Model;
 using Swashbuckle.AspNetCore.Annotations;
+using PayOS;
 
 namespace YC3_DAT_VE_CONCERT.Controllers
 {
@@ -39,12 +40,20 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             }
         }
 
-        [HttpPost("Webhook")]
-        public IActionResult PayOsWebhook([FromBody] PaymentWebhookData webhookData)
-        {
-            // Xử lý dữ liệu webhook ở đây
-            // Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu dựa trên thông tin từ webhookData
-            return Ok(); // Trả về mã trạng thái 200 để xác nhận đã nhận webhook
-        }
+        //[HttpPost("Webhook")]
+        //public async Task<IActionResult> PayOsWebhook([FromBody] PaymentWebhookData webhookData)
+        //{
+        //    try
+        //    {
+        //        var verifiedData = await payOS.Webhooks.VerifyAsync(webhookData);
+        //        Console.WriteLine($"Thanh toán thành công: {verifiedData.OrderCode}");
+        //        return Ok("OK");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Webhook không hợp lệ: {ex.Message}");
+        //        return BadRequest("Invalid webhook");
+        //    }
+        //}
     }
 }
