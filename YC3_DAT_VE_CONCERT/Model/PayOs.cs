@@ -9,6 +9,15 @@
         public string CancelUrl { get; set; }
     }
 
+    public class PaymentLinkRequestModel
+    {
+        public long OrderCode { get; set; }
+        public int Amount { get; set; }
+        public string Description { get; set; }
+        public string BuyerName { get; set; }
+        public string BuyerEmail { get; set; }
+    }
+
     // Response model trả về cho client
     public class PaymentResponse
     {

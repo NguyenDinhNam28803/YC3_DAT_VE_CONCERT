@@ -1,15 +1,14 @@
-﻿using PayOS;
+﻿using Microsoft.Extensions.Configuration;
+using PayOS;
+using PayOS.Models;
+using PayOS.Models.V2.PaymentRequests;
+using PayOS.Resources.V2.PaymentRequests;
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using YC3_DAT_VE_CONCERT.Interface;
-using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Model;
-using PayOS;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace YC3_DAT_VE_CONCERT.Service
 {
@@ -40,16 +39,16 @@ namespace YC3_DAT_VE_CONCERT.Service
         public async Task<object> CreatePaymentLink(long orderCode, int amount, string description, string buyerName, string buyerEmail)
         {
             // Use SDK request type explicitly to avoid ambiguous reference with your local model
-            var sdkRequest = new CreatePaymentRequest
+            var sdkRequest = new CreatePaymentLinkRequest
             {
-                ProductName = $"Order #{orderCode}",
+                OrderCode = orderCode,
                 Description = description,
                 Amount = amount,
                 ReturnUrl = "https://your-return-url.com",
                 CancelUrl = "https://your-cancel-url.com"
             };
 
-            var response = await _payOSClient.CreatePaymentLinkAsync(sdkRequest);
+            var response = await _payOSClient.PaymentRequests.CreateAsync(sdkRequest);
             return response!;
         }
 
