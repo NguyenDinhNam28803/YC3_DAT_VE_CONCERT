@@ -43,7 +43,7 @@ namespace YC3_DAT_VE_CONCERT.Model
         [Required(ErrorMessage = "Payment link is required")]
         [StringLength(500)]
         [Column("payment_link")]
-        public string? PaymentLink { get; set; }
+        public string PaymentLink { get; set; }
 
         // Navigation Properties
         [ForeignKey("CustomerId")]

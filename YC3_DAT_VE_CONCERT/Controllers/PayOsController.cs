@@ -24,7 +24,7 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
-                var amount_int = Convert.ToInt32(request.Amount * 100); // Convert to smallest currency unit
+                var amount_int = Convert.ToInt32(request.Amount); // Convert to smallest currency unit
                 var result = await _payOSService.CreatePaymentLink(request.OrderCode, amount_int, request.Description, request.BuyerName, request.BuyerEmail);
                 return Ok(new
                 {
@@ -37,6 +37,14 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error creating payment link", Details = ex.Message });
             }
+        }
+
+        [HttpPost("Webhook")]
+        public IActionResult PayOsWebhook([FromBody] PaymentWebhookData webhookData)
+        {
+            // Xử lý dữ liệu webhook ở đây
+            // Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu dựa trên thông tin từ webhookData
+            return Ok(); // Trả về mã trạng thái 200 để xác nhận đã nhận webhook
         }
     }
 }

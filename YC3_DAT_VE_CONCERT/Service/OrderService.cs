@@ -69,6 +69,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                         Status = o.Status.ToString(),
                         TotalAmount = o.Tickets.Where(t => t.OrderId == o.Id).Sum(t => t.Price).ToString("C"),
                         TotalTickets = o.Tickets.Count(),
+                        PaymentLink = o.PaymentLink,
                         Tickets = _context.Tickets
                             .Include(t => t.Customer)
                             .Where(t => t.OrderId == o.Id)
@@ -141,7 +142,8 @@ namespace YC3_DAT_VE_CONCERT.Service
                 {
                     CustomerId = orderDto.CustomerId,
                     OrderDate = DateTime.UtcNow,
-                    Status = OrderStatus.Pending
+                    Status = OrderStatus.Pending,
+                    PaymentLink = string.Empty
                 };
 
                 _context.Orders.Add(order);
@@ -159,7 +161,6 @@ namespace YC3_DAT_VE_CONCERT.Service
                 await _context.SaveChangesAsync();
 
                 // 5. Update order status
-                order.Status = OrderStatus.Completed;
                 order.TotalTickets = tickets.Count;
                 order.TotalAmount = tickets.Sum(t => t.Price);
                 var paymentLink = await _payOSService.CreatePaymentLink(
@@ -169,6 +170,10 @@ namespace YC3_DAT_VE_CONCERT.Service
                     buyerName: customer.Name,
                     buyerEmail: customer.Email
                 );
+                if(paymentLink == null)
+                {
+                    throw new Exception("Failed to create payment link.");
+                }
                 order.PaymentLink = paymentLink;
                 await _context.SaveChangesAsync();
 

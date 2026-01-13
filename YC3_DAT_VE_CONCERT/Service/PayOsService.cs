@@ -40,7 +40,7 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
-                var amount_int = Convert.ToInt32(amount * 100); // Convert to smallest currency unit
+                var amount_int = Convert.ToInt32(amount); // Convert to smallest currency unit
                                                                 // Use SDK request type explicitly to avoid ambiguous reference with your local model
                 var sdkRequest = new CreatePaymentLinkRequest
                 {
@@ -61,16 +61,32 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // Placeholder - implement according to SDK methods
-        public Task<object> GetPaymentInfo(long orderCode)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<object> GetPaymentInfo(long orderCode)
+        //{
+        //    try
+        //    {
+        //        var response = await Task.Run(() => _payOSClient.PaymentRequests.(orderCode));
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error retrieving payment info: " + ex.Message);
+        //    }
+        //}
 
-        // Placeholder - implement according to SDK methods
-        public Task<object> CancelPayment(long orderCode, string? reason = null)
-        {
-            throw new NotImplementedException();
-        }
+        //// Placeholder - implement according to SDK methods
+        //public async Task<object> CancelPayment(long orderCode, string? reason = null)
+        //{
+        //    try
+        //    {
+        //        var response = await Task.Run(() => _payOSClient.CancelPaymentLink(orderCode, reason));
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error cancelling payment: " + ex.Message);
+        //    }
+        //}
 
         // Verify webhook signature using stored checksum key (HMAC-SHA256 -> Base64)
         public bool VerifyWebhookSignature(string webhookUrl, string signature)
