@@ -41,7 +41,7 @@ builder.Services.AddHttpClient<PayOsService>((sp, client) =>
 });
 
 // register service
-builder.Services.AddScoped<PayOsService>();
+builder.Services.AddScoped<IPayOSService,PayOsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
