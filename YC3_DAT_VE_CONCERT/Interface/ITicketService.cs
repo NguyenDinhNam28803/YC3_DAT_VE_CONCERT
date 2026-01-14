@@ -21,10 +21,10 @@ namespace YC3_DAT_VE_CONCERT.Interface
         Task<TicketDtoRequest> CreateTicket(TicketDtoRequest ticket);
 
         // Cập nhật vé
-        UpdateTicketDto UpdateTicket(int id, UpdateTicketDto ticket);
+        Task<TicketDtoResponse> UpdateTicket(int id, UpdateTicketDto ticket);
 
         // Xóa vé
-        bool DeleteTicket(int id);
+        Task<bool> DeleteTicket(int id);
 
     }
 }

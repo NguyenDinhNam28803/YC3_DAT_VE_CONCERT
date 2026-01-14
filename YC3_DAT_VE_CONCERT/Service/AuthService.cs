@@ -3,7 +3,6 @@ using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Model;
 using YC3_DAT_VE_CONCERT.Data;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
 using System.Threading.Tasks;
 
 namespace YC3_DAT_VE_CONCERT.Service

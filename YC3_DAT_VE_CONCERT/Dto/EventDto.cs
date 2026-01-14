@@ -37,6 +37,9 @@ namespace YC3_DAT_VE_CONCERT.Dto
         public DateTime Date { get; set; }
 
         [Required]
+        public int TotalSeat { get; set; }
+
+        [Required]
         [Range(1, int.MaxValue)]
         public int VenueId { get; set; }
 

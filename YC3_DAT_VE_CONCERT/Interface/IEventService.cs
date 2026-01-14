@@ -12,12 +12,12 @@ namespace YC3_DAT_VE_CONCERT.Interface
         Task<EventResponseDto> GetEventById(int eventId);
 
         // Tạo sự kiện mới
-        void CreateEvent(Event newEvent);
+        Task<EventResponseDto> CreateEvent(CreateEventDto newEvent);
 
         // Cập nhật sự kiện
-        void UpdateEvent(int eventId, Event updatedEvent);
+        Task<EventResponseDto> UpdateEvent(int eventId, UpdateEventDto updatedEvent);
 
         // Xóa sự kiện
-        bool DeleteEvent(int eventId);
+        Task<bool> DeleteEvent(int eventId);
     }
 }

@@ -26,7 +26,8 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             try
             {
                 var tickets = await _ticketService.GetAllTicket();
-                return Ok(new {
+                return Ok(new
+                {
                     success = true,
                     message = "Tickets retrieved successfully",
                     data = tickets
@@ -89,6 +90,60 @@ namespace YC3_DAT_VE_CONCERT.Controllers
                     success = true,
                     message = "Ticket created successfully",
                     data = createdTicket
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        [SwaggerOperation(Summary = "Update a ticket")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> UpdateTicket(int id, [FromBody] UpdateTicketDto ticket)
+        {
+            try
+            {
+                var updatedTicket = await _ticketService.UpdateTicket(id, ticket);
+                return Ok(new
+                {
+                    success = true,
+                    message = "Ticket updated successfully",
+                    data = updatedTicket
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [SwaggerOperation(Summary = "Delete a ticket")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> DeleteTicket(int id)
+        {
+            try
+            {
+                var result = await _ticketService.DeleteTicket(id);
+                return Ok(new
+                {
+                    success = true,
+                    message = "Ticket deleted successfully",
+                    data = result
                 });
             }
             catch (Exception ex)

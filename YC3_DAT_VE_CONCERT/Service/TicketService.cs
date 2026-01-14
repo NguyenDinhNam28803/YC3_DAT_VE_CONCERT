@@ -159,15 +159,70 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // Cập nhật vé
-        public UpdateTicketDto UpdateTicket(int id, UpdateTicketDto ticket)
+        public async Task<TicketDtoResponse> UpdateTicket(int id, UpdateTicketDto ticket)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var existingTicket = await _context.Tickets.FindAsync(id);
+                if (existingTicket == null)
+                {
+                    throw new Exception("Ticket not found.");
+                }
+
+                var existingSeat = await _context.Tickets
+                    .AnyAsync(t => t.EventId == existingTicket.EventId && t.SeatNumber == ticket.SeatNumber && t.Id != id);
+                if (existingSeat)
+                {
+                    throw new Exception("Seat number already exists for this event.");
+                }
+
+                existingTicket.SeatNumber = ticket.SeatNumber;
+                existingTicket.Price = ticket.Price;
+                await _context.SaveChangesAsync();
+
+                var ticketResponse = new TicketDtoResponse
+                {
+                    Id = existingTicket.Id,
+                    EventName = (await _context.Events.FindAsync(existingTicket.EventId))?.Name ?? "Unknown Event",
+                    SeatNumber = existingTicket.SeatNumber,
+                    EventDate = (await _context.Events.FindAsync(existingTicket.EventId))?.Date ?? DateTime.MinValue,
+                    Price = existingTicket.Price
+                };
+
+                return ticketResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the ticket.", ex);
+            }
         }
 
         // Xóa vé
-        public bool DeleteTicket(int id)
+        public async Task<bool> DeleteTicket(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var existingTicket = await _context.Tickets.FindAsync(id);
+                if (existingTicket == null)
+                {
+                    throw new Exception("Ticket not found.");
+                }
+
+                var hasOrder = await _context.Orders
+                    .AnyAsync(o => o.Id == existingTicket.OrderId || o.CustomerId == existingTicket.CustomerId);
+                if (hasOrder)
+                {
+                    throw new Exception("Cannot delete ticket associated with an order or customer.");
+                }
+
+                _context.Tickets.Remove(existingTicket);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the ticket.", ex);
+            }
         }
     }
 }
