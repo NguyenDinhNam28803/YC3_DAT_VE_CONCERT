@@ -2,6 +2,7 @@
 using PayOS;
 using PayOS.Models;
 using PayOS.Models.V2.PaymentRequests;
+using PayOS.Models.Webhooks;
 using PayOS.Resources.V2.PaymentRequests;
 using System;
 using System.Security.Cryptography;
@@ -27,7 +28,7 @@ namespace YC3_DAT_VE_CONCERT.Service
             var apiKey = configuration["PayOS:ApiKey"] ?? throw new ArgumentNullException("PayOS:ApiKey");
             _checksumKey = configuration["PayOS:ChecksumKey"] ?? throw new ArgumentNullException("PayOS:ChecksumKey");
 
-            var options = new PayOS.PayOSOptions
+            var options = new PayOSOptions
             {
                 ClientId = clientId,
                 ApiKey = apiKey,
@@ -63,8 +64,9 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         //Placeholder - implement according to SDK methods
-        public async Task<object> GetPaymentInfo(long orderCode)
+        public async Task<object> GetPaymentInfo(Webhook webhookData)
         {
+            var response = await _payOSClient.Webhooks.VerifyAsync(webhookData);
             //try
             //{
             //    var response = await Task.Run(() => _payOSClient.PaymentRequests.(orderCode));

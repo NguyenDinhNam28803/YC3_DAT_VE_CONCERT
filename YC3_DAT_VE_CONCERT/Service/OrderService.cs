@@ -227,7 +227,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                     .Include(o => o.Tickets)
                     .FirstOrDefaultAsync(o => o.Id == orderId);
                 if (order == null)
-                    {
+                {
                     throw new Exception($"Order ID {orderId} not found.");
                 }
                 if (order.Status == OrderStatus.Cancelled)
