@@ -14,6 +14,6 @@ namespace YC3_DAT_VE_CONCERT.Interface
         void UpdateOrder(int orderId, int ticketId);
 
         // Hủy đơn đặt vé
-        void CancelOrder(int orderId);
+        Task<bool> CancelOrder(int orderId);
     }
 }

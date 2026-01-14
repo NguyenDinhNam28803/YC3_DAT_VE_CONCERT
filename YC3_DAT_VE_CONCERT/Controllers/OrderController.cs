@@ -105,5 +105,42 @@ namespace YC3_DAT_VE_CONCERT.Controllers
                 });
             }
         }
+
+        [HttpDelete]
+        [Route("{orderId}")]
+        [SwaggerOperation(Summary = "Cancel an order")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            try
+            {
+                var result = await _orderService.CancelOrder(orderId);
+                if (result)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Order cancelled successfully"
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Failed to cancel order"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
     }
 }

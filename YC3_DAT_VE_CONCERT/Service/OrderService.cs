@@ -219,9 +219,43 @@ namespace YC3_DAT_VE_CONCERT.Service
             throw new NotImplementedException();
         }
 
-        public void CancelOrder(int orderId)
+        public async Task<bool> CancelOrder(int orderId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var order = await _context.Orders
+                    .Include(o => o.Tickets)
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+                if (order == null)
+                    {
+                    throw new Exception($"Order ID {orderId} not found.");
+                }
+                if (order.Status == OrderStatus.Cancelled)
+                {
+                    throw new Exception($"Order ID {orderId} is already canceled.");
+                }
+
+                // Update order status
+                order.Status = OrderStatus.Cancelled;
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+                // Update all tickets in the order
+                foreach (var ticket in order.Tickets)
+                {
+                    ticket.Status = TicketStatus.Available; // Assuming Available is the status for unsold tickets
+                    ticket.CustomerId = null; // Clear customer association
+                    ticket.OrderId = null; // Clear order association
+                }
+
+                _context.Tickets.UpdateRange(order.Tickets);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (logging mechanism not shown here)
+                throw new ApplicationException("An error occurred while canceling the order.", ex);
+            }
         }
     }
 }
