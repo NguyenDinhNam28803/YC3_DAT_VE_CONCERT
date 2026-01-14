@@ -924,9 +924,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **Nguyễn Đình Nam**
 
 - 🌐 GitHub: [@NguyenDinhNam28803](https://github.com/NguyenDinhNam28803)
-- 📧 Email: nguyendinhnam28803@gmail.com
-- 💼 LinkedIn: [Nguyen Dinh Nam](https://linkedin.com/in/yourprofile)
-- 🌍 Website: [yourwebsite.com](https://yourwebsite.com)
+- 📧 Email: nguyendinhnam241209@gmail.com
 
 ---
 
