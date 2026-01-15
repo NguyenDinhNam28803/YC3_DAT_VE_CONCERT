@@ -13,6 +13,7 @@
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public int TotalSeat { get; set; }
+        public decimal TicketPrice { get; set; }
         public string VenueName { get; set; }
         public string VenueLocation { get; set; }
         public int VenueCapacity { get; set; }

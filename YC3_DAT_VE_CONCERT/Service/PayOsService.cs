@@ -76,6 +76,7 @@ namespace YC3_DAT_VE_CONCERT.Service
             //{
             //    throw new Exception("Error retrieving payment info: " + ex.Message);
             //}
+            return response;
             throw new NotImplementedException();
         }
 

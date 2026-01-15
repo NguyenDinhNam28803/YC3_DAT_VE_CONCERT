@@ -50,6 +50,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                         Name = e.Name,
                         Date = e.Date,
                         TotalSeat = e.TotalSeat,
+                        TicketPrice = e.TicketPrice,
                         VenueName = e.Venue.Name,
                         VenueLocation = e.Venue.Location,
                         VenueCapacity = e.Venue.Capacity,

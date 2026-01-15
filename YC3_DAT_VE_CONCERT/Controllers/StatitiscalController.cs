@@ -42,5 +42,34 @@ namespace YC3_DAT_VE_CONCERT.Controllers
                 });
             }
         }
+
+        // Chưa hoàn thiaanj
+        [HttpGet]
+        [Route("events")]
+        [SwaggerOperation(Summary = "Get event list with statistics")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> GetEventList()
+        {
+            try
+            {
+                var eventList = await _statisticalService.GetEventList();
+                return Ok(new
+                {
+                    success = true,
+                    message = "Event list retrieved successfully",
+                    data = eventList
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Failed to retrieve event list",
+                    detail = ex.Message
+                });
+            }
+        }
     }
 }

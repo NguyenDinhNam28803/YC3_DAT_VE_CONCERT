@@ -3,6 +3,7 @@ using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Data;
 using YC3_DAT_VE_CONCERT.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace YC3_DAT_VE_CONCERT.Service
 {
@@ -50,6 +51,49 @@ namespace YC3_DAT_VE_CONCERT.Service
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while retrieving orders.", ex);
+            }
+        }
+
+        public async Task<OrderResponseDto> GetOrderById(int orderId)
+        {
+            try
+            {
+                var existingOrder = await _context.Orders
+                    .Include(o => o.Tickets)
+                    .ThenInclude(t => t.Customer)
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+
+                if (existingOrder == null)
+                {
+                    throw new Exception($"Order ID {orderId} not found.");
+                }
+
+                var orderResponse = new OrderResponseDto
+                {
+                    Id = existingOrder.Id,
+                    CustomerId = existingOrder.CustomerId,
+                    CustomerName = existingOrder.Customer.Name,
+                    OrderDate = existingOrder.OrderDate,
+                    Status = existingOrder.Status.ToString(),
+                    TotalAmount = existingOrder.Tickets.Where(t => t.OrderId == existingOrder.Id).Sum(t => t.Price).ToString("C"),
+                    TotalTickets = existingOrder.Tickets.Count(),
+                    Tickets = existingOrder.Tickets.Select(t => new TicketUserDtoResponse
+                    {
+                        Id = t.Id,
+                        EventName = t.Event.Name,
+                        UserName = t.Customer.Name,
+                        EventDate = t.Event.Date,
+                        SeatNumber = t.SeatNumber,
+                        Price = t.Price,
+                        PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
+                    }).ToList()
+                };
+
+                return orderResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving the order.", ex);
             }
         }
 
@@ -214,9 +258,26 @@ namespace YC3_DAT_VE_CONCERT.Service
                 throw new Exception($"Error creating order: {ex.Message}", ex);
             }
         }
-        public void UpdateOrder(int orderId, int ticketId)
+        public async Task<OrderResponseDto> UpdateOrder(int orderId, UpdateOrderStatusDto ticketId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var existingOrder = await _context.Orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+                if (existingOrder == null)
+                {
+                    throw new Exception($"Order ID {orderId} not found.");
+                }
+
+                existingOrder.Status = Enum.Parse<OrderStatus>(ticketId.Status);
+                _context.Orders.Update(existingOrder);
+                await _context.SaveChangesAsync();
+                return await GetOrderById(orderId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the order.", ex);
+            }
         }
 
         public async Task<bool> CancelOrder(int orderId)

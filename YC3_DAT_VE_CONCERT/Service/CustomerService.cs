@@ -83,7 +83,7 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // Cập nhật thông tin khách hàng
-        public async Task<object> UpdateCustomer(int customerId, Dto.UpdateCustomerDto updateCustomerDto)
+        public async Task<CustomerResponseDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto)
         {
             try
             {
@@ -132,20 +132,18 @@ namespace YC3_DAT_VE_CONCERT.Service
                 _context.Customers.Update(existingCustomer);
                 await _context.SaveChangesAsync();
 
-                return new
+                var userInfo = new CustomerResponseDto
                 {
-                    Message = "Customer updated successfully",
-                    UserInfo = new CustomerResponseDto
-                    {
-                        Id = existingCustomer.Id,
-                        Name = existingCustomer.Name,
-                        Email = existingCustomer.Email,
-                        Phone = existingCustomer.Phone,
-                        Role = (await _context.Roles.FindAsync(existingCustomer.RoleId))?.Name ?? "Unknown",
-                        TotalOrders = await _context.Orders.CountAsync(o => o.CustomerId == existingCustomer.Id),
-                        TotalTickets = await _context.Tickets.CountAsync(t => t.CustomerId == existingCustomer.Id)
-                    }
+                    Id = existingCustomer.Id,
+                    Name = existingCustomer.Name,
+                    Email = existingCustomer.Email,
+                    Phone = existingCustomer.Phone,
+                    Role = (await _context.Roles.FindAsync(existingCustomer.RoleId))?.Name ?? "Unknown",
+                    TotalOrders = await _context.Orders.CountAsync(o => o.CustomerId == existingCustomer.Id),
+                    TotalTickets = await _context.Tickets.CountAsync(t => t.CustomerId == existingCustomer.Id)
                 };
+
+                return userInfo;
             }
             catch (Exception ex)
             {
@@ -153,5 +151,54 @@ namespace YC3_DAT_VE_CONCERT.Service
                 throw new ApplicationException($"An error occurred while updating customer with ID {customerId}.", ex);
             }
         }
+
+        public async Task<CustomerResponseDto> ChangePassword(int customerId, UpdatePasswordDto changePasswordDto)
+        {
+            try
+            {
+                if (changePasswordDto.CurrentPassword == null || changePasswordDto.NewPassword == null || changePasswordDto.ConfirmPassword == null)
+                {
+                    throw new Exception("Invalid infomation");
+                }
+
+                var exsitingUser = await _context.Customers
+                    .Include(u => u.Tickets)
+                        .ThenInclude(t => t.Event)
+                    .Include(u => u.Orders)
+                        .ThenInclude(o => o.Tickets)
+                    .Include(u => u.Role)
+                    .Where(user => user.Id == customerId)
+                    .FirstOrDefaultAsync();
+                if (exsitingUser == null) {
+                    throw new Exception($"User with id {customerId} not found");
+                }
+                var checkCurrentPass = BCrypt.Net.BCrypt.Verify(changePasswordDto.CurrentPassword, exsitingUser.Password);
+                if (checkCurrentPass && (changePasswordDto.NewPassword == changePasswordDto.ConfirmPassword))
+                {
+                    exsitingUser.Password = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
+                }
+
+                _context.Customers.Update(exsitingUser);
+                await _context.SaveChangesAsync();
+
+                var user_response = new CustomerResponseDto
+                {
+                    Id = exsitingUser.Id,
+                    Role = exsitingUser.Role.Name,
+                    Name = exsitingUser.Name,
+                    Email = exsitingUser.Email,
+                    Phone = exsitingUser.Phone,
+                    TotalOrders = exsitingUser.Orders.Count(o => o.CustomerId == exsitingUser.Id),
+                    TotalTickets = exsitingUser.Tickets.Count(t => t.CustomerId == exsitingUser.Id)
+                };
+
+                return user_response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ann error occcur when you change password", ex);
+            }
+        }
+
     }
 }

@@ -29,7 +29,7 @@ namespace YC3_DAT_VE_CONCERT.Controllers
                 return Ok(new
                 {
                     success = true,
-                    message = "Registration successful"
+                    message = "Registration successful, Please login again!"
                 });
             }
             catch (Exception ex)
@@ -45,7 +45,7 @@ namespace YC3_DAT_VE_CONCERT.Controllers
 
         [HttpPost("login")]
         [SwaggerOperation(Summary = "Đăng nhập", Description = "Đăng nhập và trả về thông tin người dùng")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerResponseDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {

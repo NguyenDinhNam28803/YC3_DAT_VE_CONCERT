@@ -1,9 +1,11 @@
-﻿namespace YC3_DAT_VE_CONCERT.Interface
+﻿using PayOS.Models.Webhooks;
+
+namespace YC3_DAT_VE_CONCERT.Interface
 {
     public interface IPayOSService
     {
         Task<string> CreatePaymentLink(long orderCode, decimal amount, string description, string buyerName, string buyerEmail);
-        Task<object> GetPaymentInfo(long orderCode);
+        Task<object> GetPaymentInfo(Webhook webhookData);
         Task<object> CancelPayment(long orderCode, string? reason = null);
         bool VerifyWebhookSignature(string webhookUrl, string signature);
 

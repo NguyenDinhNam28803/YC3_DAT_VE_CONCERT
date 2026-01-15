@@ -6,12 +6,14 @@ namespace YC3_DAT_VE_CONCERT.Interface
     {
         Task<List<OrderResponseDto>> GetAllOrders();
 
+        Task<OrderResponseDto> GetOrderById(int orderId);
+
         Task<List<OrderResponseDto>> GetOrdersByUserId(int userId);
         // Tạo đơn đặt vé mới
         Task<OrderResponseDto> CreateOrder(CreateOrderDto orderDto);
 
         // Cập nhật đơn đặt vé
-        void UpdateOrder(int orderId, int ticketId);
+        Task<OrderResponseDto> UpdateOrder(int orderId, UpdateOrderStatusDto ticketId);
 
         // Hủy đơn đặt vé
         Task<bool> CancelOrder(int orderId);

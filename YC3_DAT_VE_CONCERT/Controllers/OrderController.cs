@@ -54,6 +54,15 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
+                var existingOrder = await _orderService.GetOrdersByUserId(userId);
+                if (existingOrder == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = $"User has no order!"
+                    });
+                }
                 var orders = await _orderService.GetOrdersByUserId(userId);
                 return Ok(new
                 {
@@ -106,6 +115,43 @@ namespace YC3_DAT_VE_CONCERT.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("{orderId}")]
+        [SwaggerOperation(Summary = "Update an order")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] UpdateOrderStatusDto updateOrderStatus)
+        {
+            try
+            {
+                var existingOrder = await _orderService.GetOrderById(orderId);
+                if (existingOrder == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = $"Order with  ID {orderId} not found."
+                    });
+                }
+
+                var response = await _orderService.UpdateOrder(orderId, updateOrderStatus);
+                return Ok(new
+                {
+                    success = true,
+                    message = "Order updated successfully",
+                    data = response
+                });
+            }
+            catch (Exception ex) {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+
+            }
+        }
+
         [HttpDelete]
         [Route("{orderId}")]
         [SwaggerOperation(Summary = "Cancel an order")]
@@ -115,7 +161,17 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
+                var existingOrder = await _orderService.GetOrderById(orderId);
+                if (existingOrder == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = $"Order with  ID {orderId} not found."
+                    });
+                }
                 var result = await _orderService.CancelOrder(orderId);
+
                 if (result)
                 {
                     return Ok(new

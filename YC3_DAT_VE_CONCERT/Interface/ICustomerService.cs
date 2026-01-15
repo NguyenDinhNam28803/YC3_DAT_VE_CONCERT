@@ -13,6 +13,8 @@ namespace YC3_DAT_VE_CONCERT.Interface
         Task<CustomerResponseDto> GetCustomerById(int customerId);
 
         // Cập nhật thông tin khách hàng
-        Task<object> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto);
+        Task<CustomerResponseDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto);
+
+        Task<CustomerResponseDto> ChangePassword(int customerId, UpdatePasswordDto changePasswordDto);
     }
 }
