@@ -38,8 +38,11 @@ builder.Services.AddHttpClient<PayOsService>((sp, client) =>
     var cfg = builder.Configuration.GetSection("PayOs");
     client.BaseAddress = new Uri(cfg["BaseUrl"] ?? "https://api.payos.example");
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+})
+.SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+builder.Services.Configure<YC3_DAT_VE_CONCERT.Model.EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 // register service
 builder.Services.AddScoped<IPayOSService,PayOsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
