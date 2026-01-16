@@ -70,7 +70,7 @@ namespace YC3_DAT_VE_CONCERT.Service
         }
 
         // Nicely formatted order confirmation email
-        public Task SendOrderConfirmationEmail(string toName, string toEmail, string orderId, string concertName, DateTime concertDate, string[] seatInfo, decimal totalAmount, string? paymentLink = null)
+        public Task SendOrderConfirmationEmail(string toName, string toEmail, string orderId, string concertName, DateTime concertDate, string seatInfo, decimal totalAmount, string? paymentLink = null)
         {
             try
             {
@@ -81,13 +81,10 @@ namespace YC3_DAT_VE_CONCERT.Service
                 seatsSb.AppendLine("<table style=\"width:100%; border-collapse:collapse;\">");
                 seatsSb.AppendLine("<thead><tr><th style=\"text-align:left; padding:8px; border-bottom:1px solid #eee\">Chỗ ngồi</th></tr></thead>");
                 seatsSb.AppendLine("<tbody>");
-                foreach (var s in seatInfo ?? Array.Empty<string>())
-                {
-                    seatsSb.AppendLine($"<tr><td style=\"padding:8px 0; border-bottom:1px dashed #f0f0f0\">{WebUtility.HtmlEncode(s)}</td></tr>");
-                }
+                seatsSb.AppendLine($"<tr><td style=\"padding:8px 0; border-bottom:1px dashed #f0f0f0\">{WebUtility.HtmlEncode(seatInfo)}</td></tr>");
                 seatsSb.AppendLine("</tbody>");
                 seatsSb.AppendLine("</table>");
-
+                 
                 // Payment CTA
                 var ctaHtml = string.Empty;
                 if (!string.IsNullOrWhiteSpace(paymentLink))

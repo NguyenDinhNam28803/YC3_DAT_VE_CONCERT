@@ -245,7 +245,29 @@ namespace YC3_DAT_VE_CONCERT.Service
                     throw new Exception("Order not found after creation.");
                 }
 
-                await _emailService.SendOrderConfirmationEmail(customer.Name, customer.Email, new_order.Id, new_order, bookedTickets, paymentLink);
+                // Build data for email
+                var seatInfoArray = bookedTickets.Select(t => t.SeatNumber).FirstOrDefault(); // Sửa lại là có thể thêm nhiêu vé cùng lúc
+                var eventName = bookedTickets.FirstOrDefault()?.EventName ?? "Nhiều sự kiện";
+                var eventDate = bookedTickets.FirstOrDefault()?.EventDate ?? DateTime.UtcNow;
+                var orderIdString = new_order.Id.ToString();
+                var totalAmountDecimal = new_order.TotalAmount;
+
+                if (seatInfoArray == null)
+                {
+                    throw new Exception("No seat information available for email.");
+                }
+
+                // Send confirmation email (uses EmailService overload that accepts seat array and optional payment link)
+                await _emailService.SendOrderConfirmationEmail(
+                    customer.Name,
+                    customer.Email,
+                    orderIdString,
+                    eventName,
+                    eventDate,
+                    seatInfoArray,
+                    totalAmountDecimal,
+                    paymentLink
+                );
 
                 return new OrderResponseDto
                 {
