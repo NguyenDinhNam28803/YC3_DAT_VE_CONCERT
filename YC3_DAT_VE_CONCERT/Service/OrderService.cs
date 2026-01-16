@@ -11,9 +11,11 @@ namespace YC3_DAT_VE_CONCERT.Service
     {
         private readonly ApplicationDbContext _context;
         private readonly IPayOSService _payOSService;
-        public OrderService(ApplicationDbContext context, IPayOSService payOSService)
+        private readonly IEmailService _emailService;
+        public OrderService(ApplicationDbContext context, IEmailService emailService, IPayOSService payOSService)
         {
             _context = context;
+            _emailService = emailService;
             _payOSService = payOSService;
         }
         
@@ -231,6 +233,19 @@ namespace YC3_DAT_VE_CONCERT.Service
                     Price = t.Price,
                     PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
                 }).ToList();
+
+                var new_order = await _context.Orders
+                    .Include(o => o.Tickets)
+                        .ThenInclude(t => t.Event)
+                    .Include(o => o.Customer)
+                    .FirstOrDefaultAsync(o => o.Id == order.Id);
+
+                if (new_order == null)
+                {
+                    throw new Exception("Order not found after creation.");
+                }
+
+                await _emailService.SendOrderConfirmationEmail(customer.Name, customer.Email, new_order.Id, new_order, bookedTickets, paymentLink);
 
                 return new OrderResponseDto
                 {
