@@ -54,9 +54,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
-
-// Add Singleton
-builder.Services.AddSingleton<IAppConfigService, AppConfigService>();
+builder.Services.AddScoped<IAppConfigService, AppConfigService>();
 
 builder.Services.AddCors(options =>
 {
