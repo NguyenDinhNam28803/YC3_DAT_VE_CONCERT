@@ -13,10 +13,12 @@ namespace YC3_DAT_VE_CONCERT.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IPayOSService _payOSService;
-        public OrderController(IOrderService orderService, IPayOSService payOSService)
+        private readonly IAppConfigService _appConfigService;
+        public OrderController(IOrderService orderService, IPayOSService payOSService, IAppConfigService appConfigService)
         {
             _orderService = orderService;
             _payOSService = payOSService;
+            _appConfigService = appConfigService;
         }
 
         [HttpGet]
@@ -89,6 +91,10 @@ namespace YC3_DAT_VE_CONCERT.Controllers
         {
             try
             {
+                if (orderDto.Tickets.Count > _appConfigService.MaxTicketsPerOrder)
+                {
+                    throw new Exception("Each person can only book maximum 10 ticket");
+                }
                 var order =  await _orderService.CreateOrder(orderDto);
                 return Ok(new
                 {

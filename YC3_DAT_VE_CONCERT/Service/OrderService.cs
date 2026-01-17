@@ -1,9 +1,10 @@
-﻿using YC3_DAT_VE_CONCERT.Interface;
-using YC3_DAT_VE_CONCERT.Dto;
-using YC3_DAT_VE_CONCERT.Data;
-using YC3_DAT_VE_CONCERT.Model;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
+using System.Globalization;
+using YC3_DAT_VE_CONCERT.Data;
+using YC3_DAT_VE_CONCERT.Dto;
+using YC3_DAT_VE_CONCERT.Interface;
+using YC3_DAT_VE_CONCERT.Model;
 
 namespace YC3_DAT_VE_CONCERT.Service
 {
@@ -246,7 +247,8 @@ namespace YC3_DAT_VE_CONCERT.Service
                 }
 
                 // Build data for email
-                var seatInfoArray = bookedTickets.Select(t => t.SeatNumber).FirstOrDefault(); // Sửa lại là có thể thêm nhiêu vé cùng lúc
+                var seatInfoArray = bookedTickets.Select(t => t.SeatNumber).ToList();
+                string listSeat = string.Join(", ", seatInfoArray);
                 var eventName = bookedTickets.FirstOrDefault()?.EventName ?? "Nhiều sự kiện";
                 var eventDate = bookedTickets.FirstOrDefault()?.EventDate ?? DateTime.UtcNow;
                 var orderIdString = new_order.Id.ToString();
@@ -257,17 +259,17 @@ namespace YC3_DAT_VE_CONCERT.Service
                     throw new Exception("No seat information available for email.");
                 }
 
-                // Send confirmation email (uses EmailService overload that accepts seat array and optional payment link)
                 await _emailService.SendOrderConfirmationEmail(
-                    customer.Name,
-                    customer.Email,
-                    orderIdString,
-                    eventName,
-                    eventDate,
-                    seatInfoArray,
-                    totalAmountDecimal,
-                    paymentLink
+                        customer.Name,
+                        customer.Email,
+                        orderIdString,
+                        eventName,
+                        eventDate,
+                        listSeat,
+                        totalAmountDecimal,
+                        paymentLink
                 );
+                // Send confirmation email (uses EmailService overload that accepts seat array and optional payment link)
 
                 return new OrderResponseDto
                 {

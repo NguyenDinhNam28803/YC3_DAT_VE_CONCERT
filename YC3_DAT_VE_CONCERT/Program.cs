@@ -40,19 +40,23 @@ builder.Services.AddHttpClient<PayOsService>((sp, client) =>
     client.Timeout = TimeSpan.FromSeconds(30);
 })
 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
 builder.Services.Configure<YC3_DAT_VE_CONCERT.Model.EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
+
+// Add Transient
 builder.Services.AddTransient<IEmailService, EmailService>();
-// register service
-builder.Services.AddScoped<IPayOSService,PayOsService>();
+builder.Services.AddTransient<IPayOSService, PayOsService>();
+
+// Add Scopped
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<IStatisticalService, StatisticalService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
+
+// Add Singleton
+builder.Services.AddSingleton<IAppConfigService, AppConfigService>();
 
 builder.Services.AddCors(options =>
 {
