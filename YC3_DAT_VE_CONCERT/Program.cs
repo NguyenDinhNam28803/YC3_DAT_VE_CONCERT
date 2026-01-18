@@ -56,6 +56,10 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IAppConfigService, AppConfigService>();
 
+// Add Singleton
+builder.Services.AddSingleton<IQrCodeService, QrCodeService>();
+builder.Services.AddSingleton<IPdfService, PdfService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalDev", policy =>

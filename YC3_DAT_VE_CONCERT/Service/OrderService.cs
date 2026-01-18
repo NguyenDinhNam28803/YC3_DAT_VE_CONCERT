@@ -13,11 +13,13 @@ namespace YC3_DAT_VE_CONCERT.Service
         private readonly ApplicationDbContext _context;
         private readonly IPayOSService _payOSService;
         private readonly IEmailService _emailService;
-        public OrderService(ApplicationDbContext context, IEmailService emailService, IPayOSService payOSService)
+        private readonly IPdfService _pdfService;
+        public OrderService(ApplicationDbContext context, IEmailService emailService, IPayOSService payOSService, IPdfService pdfService)
         {
             _context = context;
             _emailService = emailService;
             _payOSService = payOSService;
+            _pdfService = pdfService;
         }
         
         public async Task<List<OrderResponseDto>> GetAllOrders()
@@ -223,6 +225,40 @@ namespace YC3_DAT_VE_CONCERT.Service
                 }
                 order.PaymentLink = paymentLink;
                 await _context.SaveChangesAsync();
+
+                var ticketDtos = tickets.Select(t => new TicketDto
+                {
+                    TicketId = t.Id,
+                    OrderId = order.Id,
+                    EventName = t.Event?.Name ?? "",
+                    EventDate = t.Event?.Date ?? DateTime.UtcNow,
+                    VenueName = t.Event?.Venue?.Name ?? "",
+                    VenueAddress = t.Event?.Venue?.Location ?? "",
+                    SeatNumber = t.SeatNumber,
+                    Price = t.Price,
+                    CustomerName = customer.Name,
+                    CustomerEmail = customer.Email,
+                    QrCodeData = t.Id.ToString(), // or a combined payload
+                    PurchasedDate = t.PurchaseDate ?? DateTime.UtcNow
+                }).ToList();
+
+                // Create a single PDF for all tickets in this order
+                byte[] pdfBytes = _pdfService.GenerateBulkTicketsPdf(ticketDtos);
+
+                var attachments = new List<EmailAttachment>
+                {
+                   new EmailAttachment
+                   {
+                        FileName = $"Ticket_VIP_{order.Id}.pdf",
+                        ContentType = "application/pdf",
+                        Content = pdfBytes
+                    }
+                };
+
+                // Build email subject/body
+                var subject = $"Xác nhận đơn hàng #{order.Id} - YC3 DAT VE CONCERT";
+
+                await _emailService.SendEmailWithAttachmentsAsync(customer.Name, customer.Email, subject, attachments);
 
                 // 6. Prepare response
                 var bookedTickets = tickets.Select(t => new TicketUserDtoResponse

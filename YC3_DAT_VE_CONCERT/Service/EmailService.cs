@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using YC3_DAT_VE_CONCERT.Dto;
 using YC3_DAT_VE_CONCERT.Interface;
 using YC3_DAT_VE_CONCERT.Model;
 using static System.Net.Mime.MediaTypeNames;
@@ -366,6 +367,102 @@ namespace YC3_DAT_VE_CONCERT.Service
                 else if (!inTag) sb.Append(ch);
             }
             return WebUtility.HtmlDecode(sb.ToString()).Replace("\r\n", "\n");
+        }
+
+        public async Task SendTicketEmailAsync(
+            string toName,
+            string toEmail,
+            string eventName,
+            DateTime eventDate,
+            string seatInfo,
+            List<EmailAttachment> attachments)
+                {
+                    var subject = $"🎫 Vé của bạn - {eventName}";
+
+                    var body = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <h2 style='color: #667eea;'>Chúc mừng! Vé của bạn đã sẵn sàng 🎉</h2>
+                    <p>Xin chào <strong>{toName}</strong>,</p>
+                    <p>Cảm ơn bạn đã đặt vé tại YC3 Concert Booking!</p>
+            
+                    <div style='background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+                        <h3 style='margin-top: 0;'>📋 Thông tin sự kiện</h3>
+                        <p><strong>Sự kiện:</strong> {eventName}</p>
+                        <p><strong>Ngày giờ:</strong> {eventDate:dd/MM/yyyy HH:mm}</p>
+                        <p><strong>Chỗ ngồi:</strong> {seatInfo}</p>
+                    </div>
+            
+                    <p><strong>⚠️ Lưu ý quan trọng:</strong></p>
+                    <ul>
+                        <li>Vui lòng mang theo vé này (in ra hoặc hiển thị trên điện thoại)</li>
+                        <li>Đến trước 30 phút để check-in</li>
+                        <li>Vé đính kèm ở dưới dạng file PDF</li>
+                    </ul>
+            
+                    <p style='margin-top: 30px;'>Chúc bạn có trải nghiệm tuyệt vời! 🎤</p>
+                    <p style='color: #666;'>Trân trọng,<br/>Đội ngũ YC3 Concert Booking</p>
+                </div>
+            ";
+
+            await SendEmailWithAttachmentsAsync(toEmail, subject, body, attachments);
+        }
+
+        public async Task SendEmailWithAttachmentsAsync(
+        string toEmail,
+        string subject,
+        string body,
+        List<EmailAttachment> attachments)
+        {
+            try
+            {
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(
+                    _emailSettings.SenderName ?? "YC3 Concert Booking",
+                    _emailSettings.SenderEmail ?? "noreply@yc3.com"));
+
+                message.To.Add(new MailboxAddress(toEmail, toEmail));
+                message.Subject = subject;
+
+                var bodyBuilder = new BodyBuilder
+                {
+                    HtmlBody = body
+                };
+
+                // ✅ Thêm attachments
+                if (attachments != null && attachments.Any())
+                {
+                    foreach (var attachment in attachments)
+                    {
+                        bodyBuilder.Attachments.Add(
+                            attachment.FileName,
+                            attachment.Content,
+                            ContentType.Parse(attachment.ContentType));
+                    }
+                }
+
+                message.Body = bodyBuilder.ToMessageBody();
+
+                using (var client = new SmtpClient())
+                {
+                    await client.ConnectAsync(
+                        _emailSettings.SmtpServer,
+                        _emailSettings.Port,
+                        SecureSocketOptions.StartTls
+                    );
+
+                    await client.AuthenticateAsync(
+                        _emailSettings.Username,
+                        _emailSettings.Password
+                    );
+
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to send email with attachments: {ex.Message}", ex);
+            }
         }
     }
 }
