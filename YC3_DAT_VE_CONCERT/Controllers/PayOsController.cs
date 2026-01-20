@@ -87,7 +87,10 @@ namespace YC3_DAT_VE_CONCERT.Controllers
 
                 // 2️⃣ Kiểm tra thanh toán thành công
                 if (!webhook.Success)
-                    return Ok("Payment not completed");
+                    return BadRequest(new { 
+                        success = false,
+                        message= "Payment not completed" 
+                    });
 
                 // 3️⃣ Cập nhật đơn hàng
                 var order = await _context.Orders
