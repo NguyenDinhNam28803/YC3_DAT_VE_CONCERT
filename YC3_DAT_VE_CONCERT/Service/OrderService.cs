@@ -249,16 +249,11 @@ namespace YC3_DAT_VE_CONCERT.Service
                 {
                    new EmailAttachment
                    {
-                        FileName = $"Ticket_VIP_{order.Id}.pdf",
+                        FileName = $"Order_{order.Id}.pdf",
                         ContentType = "application/pdf",
                         Content = pdfBytes
-                    }
+                   }
                 };
-
-                // Build email subject/body
-                var subject = $"Xác nhận đơn hàng #{order.Id} - YC3 DAT VE CONCERT";
-
-                await _emailService.SendEmailWithAttachmentsAsync(customer.Name, customer.Email, subject, attachments);
 
                 // 6. Prepare response
                 var bookedTickets = tickets.Select(t => new TicketUserDtoResponse
@@ -270,6 +265,11 @@ namespace YC3_DAT_VE_CONCERT.Service
                     Price = t.Price,
                     PurchaseDate = t.PurchaseDate ?? DateTime.MinValue
                 }).ToList();
+
+                foreach (var ticket in bookedTickets)
+                {
+                    await _emailService.SendTicketEmailAsync(customer.Name, customer.Email, ticket.EventName, ticket.EventDate, ticket.SeatNumber, attachments);
+                }
 
                 var new_order = await _context.Orders
                     .Include(o => o.Tickets)
