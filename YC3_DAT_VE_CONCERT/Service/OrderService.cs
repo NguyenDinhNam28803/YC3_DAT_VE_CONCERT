@@ -160,6 +160,8 @@ namespace YC3_DAT_VE_CONCERT.Service
                 var ticketIds = orderDto.Tickets.Select(t => t.TicketId).ToList();
                 var tickets = await _context.Tickets
                     .Include(t => t.Event)
+                        .ThenInclude(e => e.Venue)
+                    .Include(t => t.Customer)
                     .Where(t => ticketIds.Contains(t.Id))
                     .ToListAsync();
 
@@ -226,21 +228,22 @@ namespace YC3_DAT_VE_CONCERT.Service
                 order.PaymentLink = paymentLink;
                 await _context.SaveChangesAsync();
 
-                var ticketDtos = tickets.Select(t => new TicketDto
-                {
-                    TicketId = t.Id,
-                    OrderId = order.Id,
-                    EventName = t.Event?.Name ?? "",
-                    EventDate = t.Event?.Date ?? DateTime.UtcNow,
-                    VenueName = t.Event?.Venue?.Name ?? "",
-                    VenueAddress = t.Event?.Venue?.Location ?? "",
-                    SeatNumber = t.SeatNumber,
-                    Price = t.Price,
-                    CustomerName = customer.Name,
-                    CustomerEmail = customer.Email,
-                    QrCodeData = t.Id.ToString(), // or a combined payload
-                    PurchasedDate = t.PurchaseDate ?? DateTime.UtcNow
-                }).ToList();
+                var ticketDtos = tickets
+                    .Select(t => new TicketDto
+                    {
+                        TicketId = t.Id,
+                        OrderId = order.Id,
+                        EventName = t.Event?.Name ?? "",
+                        EventDate = t.Event?.Date ?? DateTime.UtcNow,
+                        VenueName = t.Event?.Venue?.Name ?? "",
+                        VenueAddress = t.Event?.Venue?.Location ?? "",
+                        SeatNumber = t.SeatNumber,
+                        Price = t.Price,
+                        CustomerName = customer.Name,
+                        CustomerEmail = customer.Email,
+                        QrCodeData = t.Id.ToString(), // or a combined payload
+                        PurchasedDate = t.PurchaseDate ?? DateTime.UtcNow
+                    }).ToList();
 
                 // Create a single PDF for all tickets in this order
                 byte[] pdfBytes = _pdfService.GenerateBulkTicketsPdf(ticketDtos);
@@ -260,6 +263,7 @@ namespace YC3_DAT_VE_CONCERT.Service
                 {
                     Id = t.Id,
                     EventName = t.Event.Name,
+                    UserName = t.Customer?.Name ?? "Khách hàng",
                     EventDate = t.Event.Date,
                     SeatNumber = t.SeatNumber,
                     Price = t.Price,

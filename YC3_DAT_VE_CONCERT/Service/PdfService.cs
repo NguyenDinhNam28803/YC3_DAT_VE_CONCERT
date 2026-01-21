@@ -10,7 +10,7 @@ namespace YC3_DAT_VE_CONCERT.Service
     {
         private readonly IQrCodeService _qrCodeService;
         private readonly IWebHostEnvironment _environment;
-        public PdfService(IQrCodeService qrCodeService, IWebHostEnvironment environment) 
+        public PdfService(IQrCodeService qrCodeService, IWebHostEnvironment environment)
         {
             _qrCodeService = qrCodeService;
             _environment = environment;
@@ -89,9 +89,9 @@ namespace YC3_DAT_VE_CONCERT.Service
             // ============================================
             // MODERN HEADER with Gradient Effect
             // ============================================
-            var headerHeight = 140;
+            var headerHeight = 120;  // ✅ Giảm từ 140 xuống 120
 
-            // Gradient simulation with multiple rectangles
+            // Gradient simulation
             for (int i = 0; i < headerHeight; i += 2)
             {
                 var gradientColor = XColor.FromArgb(
@@ -102,152 +102,140 @@ namespace YC3_DAT_VE_CONCERT.Service
                 gfx.DrawRectangle(new XSolidBrush(gradientColor), 0, i, pageWidth, 2);
             }
 
-            // Decorative circles in header
+            // Decorative circles
             gfx.DrawEllipse(new XSolidBrush(XColor.FromArgb(50, 255, 255, 255)),
                 pageWidth - 100, -30, 120, 120);
             gfx.DrawEllipse(new XSolidBrush(XColor.FromArgb(30, 255, 255, 255)),
                 -40, headerHeight - 80, 100, 100);
 
-            // Logo placeholder (optional)
+            // Logo
             try
             {
                 var logoPath = Path.Combine(_environment.WebRootPath, "images", "logo.png");
                 if (File.Exists(logoPath))
                 {
                     var logo = XImage.FromFile(logoPath);
-                    gfx.DrawImage(logo, 30, 25, 70, 70);
+                    gfx.DrawImage(logo, 30, 20, 60, 60);  // ✅ Giảm size
                 }
             }
-            catch { /* Logo không tồn tại */ }
+            catch { }
 
             // Main Title
             gfx.DrawString("VÉ THAM GIA CONCERT", titleFont, XBrushes.White,
-                new XRect(0, 45, pageWidth, 40), XStringFormats.Center);
+                new XRect(0, 35, pageWidth, 40), XStringFormats.Center);
 
             // Ticket ID Badge
             var badgeWidth = 180;
             var badgeX = (pageWidth - badgeWidth) / 2;
             gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(80, 255, 255, 255)),
-                badgeX, 95, badgeWidth, 30);
+                badgeX, 85, badgeWidth, 28);  // ✅ Giảm height
             gfx.DrawRectangle(new XPen(XColor.FromArgb(150, 255, 255, 255), 1.5),
-                badgeX, 95, badgeWidth, 30);
+                badgeX, 85, badgeWidth, 28);
             gfx.DrawString($"#{ticket.TicketId}", subHeaderFont, XBrushes.White,
-                new XRect(badgeX, 95, badgeWidth, 30), XStringFormats.Center);
+                new XRect(badgeX, 85, badgeWidth, 28), XStringFormats.Center);
 
             // ============================================
-            // EVENT INFO CARD - Elevated Design
+            // EVENT INFO CARD - Compact
             // ============================================
-            var cardY = headerHeight + 25;
+            var cardY = headerHeight + 20;  // ✅ Giảm margin
             var cardPadding = 30;
             var cardWidth = pageWidth - 60;
 
             // Card shadow
             gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(20, 0, 0, 0)),
-                32, cardY + 3, cardWidth, 100);
+                32, cardY + 3, cardWidth, 90);  // ✅ Giảm từ 100 xuống 90
 
             // Card background
-            gfx.DrawRectangle(XBrushes.White, 30, cardY, cardWidth, 100);
-            gfx.DrawRectangle(new XPen(bgGray, 1), 30, cardY, cardWidth, 100);
+            gfx.DrawRectangle(XBrushes.White, 30, cardY, cardWidth, 90);
+            gfx.DrawRectangle(new XPen(bgGray, 1), 30, cardY, cardWidth, 90);
+            gfx.DrawRectangle(new XSolidBrush(primaryColor), 30, cardY, 5, 90);
 
-            // Left border accent
-            gfx.DrawRectangle(new XSolidBrush(primaryColor), 30, cardY, 5, 100);
+            var infoY = cardY + 15;  // ✅ Giảm padding
 
-            var infoY = cardY + 20;
-
-            // Event Name - Bold & Large
+            // Event Name
             gfx.DrawString(ticket.EventName, headerFont, new XSolidBrush(textDark),
                 new XRect(50, infoY, cardWidth - 40, 25), XStringFormats.TopLeft);
 
-            infoY += 35;
+            infoY += 32;  // ✅ Giảm spacing
 
-            // Event details in two columns
-            // Left column
+            // Event details
             DrawModernInfoItem(gfx, "📅", "Ngày & Giờ",
                 ticket.EventDate.ToString("dd/MM/yyyy • HH:mm"),
                 50, infoY, boldFont, normalFont, textMedium);
 
-            // Right column
             DrawModernInfoItem(gfx, "📍", "Địa điểm",
                 ticket.VenueName,
                 pageWidth / 2 + 10, infoY, boldFont, normalFont, textMedium);
 
             // ============================================
-            // SEAT & PRICE - Big Focus Area
+            // SEAT & PRICE - Compact
             // ============================================
-            var seatY = cardY + 140;
-            var seatBoxHeight = 130;
+            var seatY = cardY + 110;  // ✅ Điều chỉnh
+            var seatBoxHeight = 110;  // ✅ Giảm từ 130 xuống 110
 
-            // Background with subtle pattern
             gfx.DrawRectangle(new XSolidBrush(bgLight), 30, seatY, cardWidth, seatBoxHeight);
+            gfx.DrawLine(new XPen(primaryColor, 3), 30, seatY, 30 + cardWidth, seatY);
 
-            // Top border accent
-            var gradientPen = new XPen(primaryColor, 3);
-            gfx.DrawLine(gradientPen, 30, seatY, 30 + cardWidth, seatY);
-
-            var seatContentY = seatY + 25;
-
-            // Seat Number Section - LEFT (60% width)
+            var seatContentY = seatY + 20;  // ✅ Giảm padding
             var seatSectionWidth = cardWidth * 0.6;
 
             gfx.DrawString("CHỖ NGỒI", boldFont, new XSolidBrush(textMedium),
                 new XRect(50, seatContentY, seatSectionWidth, 20), XStringFormats.TopLeft);
 
-            var megaSeatFont = new XFont("Arial", 48, XFontStyle.Bold);
+            var megaSeatFont = new XFont("Arial", 42, XFontStyle.Bold);  // ✅ Giảm từ 48
             gfx.DrawString(ticket.SeatNumber, megaSeatFont, new XSolidBrush(primaryColor),
-                new XRect(50, seatContentY + 20, seatSectionWidth, 60), XStringFormats.TopLeft);
+                new XRect(50, seatContentY + 18, seatSectionWidth, 55), XStringFormats.TopLeft);
 
-            // Decorative underline
-            gfx.DrawLine(new XPen(accentColor, 3), 50, seatContentY + 85,
-                50 + ticket.SeatNumber.Length * 30, seatContentY + 85);
+            gfx.DrawLine(new XPen(accentColor, 3), 50, seatContentY + 78,
+                50 + ticket.SeatNumber.Length * 28, seatContentY + 78);
 
-            // Vertical divider
+            // Divider
             var dividerX = 30 + seatSectionWidth + 20;
             gfx.DrawLine(new XPen(bgGray, 2), dividerX, seatContentY,
-                dividerX, seatContentY + 90);
+                dividerX, seatContentY + 80);
 
-            // Price Section - RIGHT (40% width)
+            // Price Section
             var priceX = dividerX + 30;
             var priceSectionWidth = cardWidth * 0.35;
 
             gfx.DrawString("GIÁ VÉ", boldFont, new XSolidBrush(textMedium),
                 new XRect(priceX, seatContentY, priceSectionWidth, 20), XStringFormats.TopLeft);
 
-            var priceFont = new XFont("Arial", 32, XFontStyle.Bold);
+            var priceFont = new XFont("Arial", 28, XFontStyle.Bold);  // ✅ Giảm từ 32
             gfx.DrawString($"{ticket.Price:N0}", priceFont, new XSolidBrush(successColor),
-                new XRect(priceX, seatContentY + 20, priceSectionWidth, 45), XStringFormats.TopLeft);
+                new XRect(priceX, seatContentY + 18, priceSectionWidth, 40), XStringFormats.TopLeft);
 
             gfx.DrawString("VNĐ", normalFont, new XSolidBrush(textMedium),
-                new XRect(priceX, seatContentY + 65, priceSectionWidth, 20), XStringFormats.TopLeft);
+                new XRect(priceX, seatContentY + 58, priceSectionWidth, 20), XStringFormats.TopLeft);
 
             // ============================================
-            // CUSTOMER INFORMATION - Clean List
+            // CUSTOMER INFORMATION - Compact
             // ============================================
-            var customerY = seatY + seatBoxHeight + 30;
+            var customerY = seatY + seatBoxHeight + 20;  // ✅ Giảm margin
 
             gfx.DrawString("THÔNG TIN KHÁCH HÀNG", subHeaderFont, new XSolidBrush(textDark),
                 new XRect(30, customerY, cardWidth, 20), XStringFormats.TopLeft);
 
-            customerY += 30;
+            customerY += 25;  // ✅ Giảm spacing
 
-            // Info items with icons
             DrawCleanInfoRow(gfx, "👤", "Khách hàng", ticket.CustomerName,
                 50, customerY, textMedium, textDark);
-            customerY += 25;
+            customerY += 22;  // ✅ Giảm từ 25
 
             DrawCleanInfoRow(gfx, "📧", "Email", ticket.CustomerEmail,
                 50, customerY, textMedium, textDark);
-            customerY += 25;
+            customerY += 22;
 
             DrawCleanInfoRow(gfx, "🎫", "Mã đơn hàng", ticket.OrderId.ToString(),
                 50, customerY, textMedium, textDark);
-            customerY += 25;
+            customerY += 22;
 
             if (ticket.PurchasedDate != null)
             {
                 DrawCleanInfoRow(gfx, "📆", "Ngày thanh toán",
                     ticket.PurchasedDate.ToString(),
                     50, customerY, textMedium, textDark);
-                customerY += 35;
+                customerY += 30;  // ✅ Giảm từ 35
             }
             else
             {
@@ -255,11 +243,10 @@ namespace YC3_DAT_VE_CONCERT.Service
             }
 
             // ============================================
-            // QR CODE - NO BORDER VERSION
+            // QR CODE - FULL DISPLAY với đủ khoảng trống
             // ============================================
-            var qrSectionY = customerY + 10; // Margin từ customer info
+            var qrSectionY = customerY + 15;  // ✅ Margin tối ưu
 
-            // QR Code generation with temp file
             try
             {
                 var qrCode = _qrCodeService.GenerateQrCode(ticket.QrCodeData, 20);
@@ -270,35 +257,35 @@ namespace YC3_DAT_VE_CONCERT.Service
                 {
                     using var qrImage = XImage.FromFile(tempQrPath);
 
-                    var qrSize = 160;
+                    var qrSize = 150;  // ✅ Giảm từ 160 để tiết kiệm không gian
                     var qrX = (pageWidth - qrSize) / 2;
                     var qrY = qrSectionY;
 
-                    // ✅ White background box cho QR (không có border card nữa)
-                    var qrPadding = 15;
-                    gfx.DrawRectangle(XBrushes.White,
-                        qrX - qrPadding, qrY - qrPadding,
-                        qrSize + (qrPadding * 2), qrSize + (qrPadding * 2));
+                    // White background with shadow
+                    var qrPadding = 12;  // ✅ Giảm padding
 
-                    // ✅ Subtle shadow
                     gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(10, 0, 0, 0)),
                         qrX - qrPadding + 3, qrY - qrPadding + 3,
                         qrSize + (qrPadding * 2), qrSize + (qrPadding * 2));
 
-                    // ✅ Draw QR
+                    gfx.DrawRectangle(XBrushes.White,
+                        qrX - qrPadding, qrY - qrPadding,
+                        qrSize + (qrPadding * 2), qrSize + (qrPadding * 2));
+
+                    // Draw QR
                     gfx.DrawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
-                    // ✅ Instructions below QR
-                    var instructionY = qrY + qrSize + 20;
+                    // Instructions
+                    var instructionY = qrY + qrSize + 15;  // ✅ Giảm spacing
 
                     gfx.DrawString("Quét mã QR để check-in", subHeaderFont, new XSolidBrush(textDark),
                         new XRect(0, instructionY, pageWidth, 20), XStringFormats.Center);
 
                     gfx.DrawString("Vui lòng xuất trình mã này tại cổng vào", smallFont, new XSolidBrush(textMedium),
-                        new XRect(0, instructionY + 22, pageWidth, 15), XStringFormats.Center);
+                        new XRect(0, instructionY + 20, pageWidth, 15), XStringFormats.Center);
 
-                    // ✅ Update position cho footer
-                    qrSectionY = instructionY + 45; // Cập nhật vị trí kết thúc QR section
+                    // ✅ Cập nhật vị trí kết thúc QR section
+                    qrSectionY = instructionY + 40;
                 }
                 finally
                 {
@@ -309,44 +296,35 @@ namespace YC3_DAT_VE_CONCERT.Service
             catch (Exception ex)
             {
                 gfx.DrawString($"QR Code: {ticket.TicketId}", normalFont, new XSolidBrush(textMedium),
-                    new XRect(0, qrSectionY + 80, pageWidth, 20), XStringFormats.Center);
-                qrSectionY += 120;
+                    new XRect(0, qrSectionY + 75, pageWidth, 20), XStringFormats.Center);
+                qrSectionY += 110;
                 Console.WriteLine($"QR Code error: {ex.Message}");
             }
 
             // ============================================
-            // FOOTER - DYNAMIC POSITION (bắt đầu SAU QR)
+            // FOOTER - LUÔN Ở CUỐI TRANG
             // ============================================
-            double footerY = qrSectionY + 20; // ✅ 20px margin từ QR section
-            var footerHeight = 90;
-
-            // ✅ CHECK: Đảm bảo footer không vượt quá trang
-            var pageBottomMargin = 10;
-            if (footerY + footerHeight > pageHeight - pageBottomMargin)
-            {
-                footerY = pageHeight - footerHeight - pageBottomMargin;
-            }
+            var footerHeight = 85;  // ✅ Giảm từ 90
+            var footerY = pageHeight - footerHeight;  // ✅ LUÔN neo ở cuối trang
 
             // Footer background
             gfx.DrawRectangle(new XSolidBrush(bgGray), 0, footerY, pageWidth, footerHeight);
-
-            // Top border accent
             gfx.DrawLine(new XPen(primaryColor, 2), 0, footerY, pageWidth, footerY);
 
-            var footerContentY = footerY + 15;
+            var footerContentY = footerY + 12;  // ✅ Giảm padding
 
             // Warning icon + title
-            var warningIconSize = 14;
+            var warningIconSize = 13;  // ✅ Giảm size
             gfx.DrawEllipse(new XSolidBrush(accentColor), 30, footerContentY, warningIconSize, warningIconSize);
-            gfx.DrawString("!", new XFont("Arial", 10, XFontStyle.Bold), XBrushes.White,
+            gfx.DrawString("!", new XFont("Arial", 9, XFontStyle.Bold), XBrushes.White,
                 new XRect(30, footerContentY, warningIconSize, warningIconSize), XStringFormats.Center);
 
             gfx.DrawString("LƯU Ý QUAN TRỌNG", boldFont, new XSolidBrush(textDark),
-                new XRect(50, footerContentY + 2, 200, 18), XStringFormats.TopLeft);
+                new XRect(48, footerContentY + 1, 200, 18), XStringFormats.TopLeft);
 
-            footerContentY += 22;
+            footerContentY += 20;  // ✅ Giảm spacing
 
-            // Notes - 2 columns for compact
+            // Notes - 2 columns
             var col1X = 35;
             var col2X = pageWidth / 2 + 5;
             var noteFont = new XFont("Arial", 8, XFontStyle.Regular);
@@ -379,28 +357,25 @@ namespace YC3_DAT_VE_CONCERT.Service
                 noteY2 += 11;
             }
 
-            // Company info at bottom
-            var companyY = footerContentY + 28;
+            // Company info
+            var companyY = footerContentY + 26;  // ✅ Điều chỉnh
             gfx.DrawString("YC3 Concert Booking © 2025 | support@yc3concert.com",
                 tinyFont, new XSolidBrush(textLight),
                 new XRect(0, companyY, pageWidth, 10), XStringFormats.Center);
         }
 
         // ============================================
-        // HELPER METHODS - Modern Design
+        // HELPER METHODS
         // ============================================
         private void DrawModernInfoItem(XGraphics gfx, string icon, string label, string value,
             double x, double y, XFont labelFont, XFont valueFont, XColor labelColor)
         {
-            // Icon
             gfx.DrawString(icon, new XFont("Arial", 14), new XSolidBrush(labelColor),
                 new XRect(x, y - 2, 20, 20), XStringFormats.TopLeft);
 
-            // Label
             gfx.DrawString(label, labelFont, new XSolidBrush(labelColor),
                 new XRect(x + 25, y, 150, 15), XStringFormats.TopLeft);
 
-            // Value
             gfx.DrawString(value, valueFont, XBrushes.Black,
                 new XRect(x + 25, y + 16, 250, 15), XStringFormats.TopLeft);
         }
@@ -412,15 +387,12 @@ namespace YC3_DAT_VE_CONCERT.Service
             var labelFont = new XFont("Arial", 10, XFontStyle.Regular);
             var valueFont = new XFont("Arial", 10, XFontStyle.Bold);
 
-            // Icon
             gfx.DrawString(icon, iconFont, new XSolidBrush(labelColor),
                 new XRect(x - 25, y - 1, 20, 20), XStringFormats.TopLeft);
 
-            // Label with colon
             gfx.DrawString($"{label}:", labelFont, new XSolidBrush(labelColor),
                 new XRect(x, y, 120, 18), XStringFormats.TopLeft);
 
-            // Value
             gfx.DrawString(value, valueFont, new XSolidBrush(valueColor),
                 new XRect(x + 120, y, 350, 18), XStringFormats.TopLeft);
         }
