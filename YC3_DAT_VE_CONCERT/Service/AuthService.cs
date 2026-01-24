@@ -20,7 +20,7 @@ namespace YC3_DAT_VE_CONCERT.Service
         {
             try
             {
-                var userName = await _context.Customers.FirstOrDefaultAsync(user => user.Name == loginDto.Username);
+                var userName = await _context.Customers.FirstOrDefaultAsync(user => user.Name == loginDto.Username || user.Email == loginDto.Username);
                 if (userName == null)
                 {
                     throw new Exception("Invalid Username");

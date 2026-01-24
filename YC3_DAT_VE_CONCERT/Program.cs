@@ -67,7 +67,6 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin() // <-- Allow requests from any origin
               .AllowAnyHeader()
               .AllowAnyMethod();
-        // .AllowCredentials(); // Bật nếu bạn gửi cookies/credentials. Nếu bật, không dùng AllowAnyOrigin.
     });
 });
 builder.Services.AddOpenApi();
